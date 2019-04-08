@@ -26,7 +26,7 @@ Every command has its own comment based help, so there should be no issues with 
 Most of the help comes from the API itself, so blame them for mistakes  :)
 
 
-# Please Note
+## Please Note
 This is an inital public offering, and as such there is a lot of work is still needed.
 In addition to wanting to support pipeline processing correctly, I want to make it API complete as much as I can.
 
