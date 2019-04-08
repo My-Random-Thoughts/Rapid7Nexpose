@@ -220,5 +220,6 @@ This list shows the current API coverage of the module as of 2019-04-10.
     [@]    7  Bugs
 
 `ReqWork` are endpoints that require extra work or need to be re-written
+
 `Skipped` API endpoints are ones that are duplicated elsewhere
 
