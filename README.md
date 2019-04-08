@@ -7,7 +7,7 @@ This module also works with 'insightVM' - They are basically the same product
 
 
 ## Download And Import
-Download the all the files into your PowerShell module path (usually C:\Program Files\WindowsPowerShell\Modules) in import it
+Download the all the files into your PowerShell module path (usually C:\Program Files\WindowsPowerShell\Modules) and import it
 
 `Import-Module -Name 'Rapid7Nexpose'`
 
@@ -34,4 +34,6 @@ In addition to wanting to support pipeline processing correctly, I want to make 
 I have several bugs open with Rapid7 for API issues, and I will be tracking those with the bug tracker here on GitHub
 Some of them are minor ones that I may have coded around, others are much larger breaking issues.
 
+### API Coverage
+Due to the size of the API and the number of modules I have written, it's quite difficult to keep track of the what has been done and what hasn't.  To help this every module has a `.FUNCTIONALITY` comment based header that lists all the API endpoints that are covered in that particular function.  Have a look at the **api-coverage.md** file for the full list.
 
