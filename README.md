@@ -35,5 +35,5 @@ I have several bugs open with Rapid7 for API issues, and I will be tracking thos
 Some of them are minor ones that I may have coded around, others are much larger breaking issues.
 
 ### API Coverage
-Due to the size of the API and the number of modules I have written, it's quite difficult to keep track of the what has been done and what hasn't.  To help this every module has a `.FUNCTIONALITY` comment based header that lists all the API endpoints that are covered in that particular function.  Have a look at the **api-coverage.md** file for the full list.
+Due to the size of the API and the number of functions I have written, it's quite difficult to keep track of the what has been done and what hasn't.  To help this every function has a comment based header containing "`.FUNCTIONALITY`"  that lists all the API endpoints that are covered in that particular function.  Have a look at the **api-coverage.md** file for the full list.
 
