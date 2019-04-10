@@ -7,7 +7,7 @@ This module also works with 'insightVM' - They are basically the same product
 
 
 ## Download And Import
-Download the all the files into your PowerShell module path (usually C:\Program Files\WindowsPowerShell\Modules) and import it
+Download all the files into your PowerShell module path (usually C:\Program Files\WindowsPowerShell\Modules) and import it
 
 `Import-Module -Name 'Rapid7Nexpose'`
 
