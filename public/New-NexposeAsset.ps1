@@ -10,7 +10,7 @@ Function New-NexposeAsset {
         The primary IPv4 or IPv6 address of the asset
 
     .EXAMPLE
-        New-NexposeAsset -SiteId 2 -IpAddress 10.1.1.10
+        New-NexposeAsset -IpAddress 10.1.1.10
 
     .NOTES
         For additional information please see my GitHub wiki page
