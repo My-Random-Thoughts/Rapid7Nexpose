@@ -34,14 +34,14 @@ Function Test-NexposeSearchCriteria {
         # Set up the values
         $types     = @{
             'alternate-address-type'         = ('0','1')                # 0=ipv4, 1=ipv6
-            'containers'                     = ('0','1')                # 0=present, 1=not-present
+            'containers'                     = ('present','not-present')
             'container-status'               = ('created','running','paused','restarting','exited','dead','unknown')
             'criticality-tag'                = ('Very Low','Low','Medium','High','Very High')
             'cvss-access-complexity'         = ('L','M','H')            # L=Low, M=Medium, H=High
+            'cvss-access-vector'             = ('L','A','N')            # L=Local, A=Adjacent, N=Network
+            'cvss-availability-impact'       = ('N','P','C')            # N=None, P=Partial, C=Complete
             'cvss-integrity-impact'          = ('N','P','C')            # N=None, P=Partial, C=Complete
             'cvss-confidentiality-impact'    = ('N','P','C')            # N=None, P=Partial, C=Complete
-            'cvss-availability-impact'       = ('N','P','C')            # N=None, P=Partial, C=Complete
-            'cvss-access-vector'             = ('L','A','N')            # L=Local, A=Adjacent, N=Network
             'cvss-authentication-required'   = ('N','S','M')            # N=None, S=Single, M=Multiple
             'cvss-v3-confidentiality-impact' = ('L','N','H')            # L=Local/Low, N=None, H=High
             'cvss-v3-integrity-impact'       = ('L','N','H')            # L=Local/Low, N=None, H=High
@@ -57,7 +57,8 @@ Function Test-NexposeSearchCriteria {
             'vasset-power state'             = ('poweredOn','poweredOff','suspended')
 
             # CUSTOM WORK AROUND REQURIED FOR THIS WHEN WRITING THE QUERIES
-            'vulnerability-exposures'        = ('malwarekit_exploits','metasploit_exploits','exploit_database_exploits')
+            #'vulnerability-exposures'        = ('malwarekit_exploits','metasploit_exploits','exploit_database_exploits')
+            'vulnerability-exposures'        = ('type:"malware_type", name:"malwarekit"','type:"exploit_source_type", name:"107"','type:"exploit_source_type", name:"108"')
                 # Malware Kit Exploits:       "values": ["type:\"malware_type\", name:\"malwarekit\""]
                 # Metasploit Exploits:        "values": ["type:\"exploit_source_type\", name:\"108\""]
                 # Exploit Database Exploits:  "values": ["type:\"exploit_source_type\", name:\"107\""]
@@ -71,18 +72,18 @@ Function Test-NexposeSearchCriteria {
             'custom-tag'                     = ('is','is-not','starts-with','ends-with','contains','does-not-contain','is-applied','is-not-applied')
             'cve'                            = ('is','is-not','contains','does-not-contain')
             'cvss-access-complexity'         = ('is','is-not')
-            'cvss-authentication-required'   = ('is','is-not')
             'cvss-access-vector'             = ('is','is-not')
+            'cvss-authentication-required'   = ('is','is-not')
             'cvss-availability-impact'       = ('is','is-not')
             'cvss-confidentiality-impact'    = ('is','is-not')
             'cvss-integrity-impact'          = ('is','is-not')
+            'cvss-v3-attack-complexity'      = ('is','is-not')
+            'cvss-v3-attack-vector'          = ('is','is-not')
+            'cvss-v3-availability-impact'    = ('is','is-not')
             'cvss-v3-confidentiality-impact' = ('is','is-not')
             'cvss-v3-integrity-impact'       = ('is','is-not')
-            'cvss-v3-availability-impact'    = ('is','is-not')
-            'cvss-v3-attack-vector'          = ('is','is-not')
-            'cvss-v3-attack-complexity'      = ('is','is-not')
-            'cvss-v3-user-interaction'       = ('is','is-not')
             'cvss-v3-privileges-required'    = ('is','is-not')
+            'cvss-v3-user-interaction'       = ('is','is-not')
             'host-name'                      = ('is','is-not','starts-with','ends-with','contains','does-not-contain','is-empty','is-not-empty','is-like','not-like')
             'host-type'                      = ('in','not-in')
             'ip-address'                     = ('is','is-not','in-range','not-in-range','is-like','not-like')
@@ -101,12 +102,12 @@ Function Test-NexposeSearchCriteria {
             'vasset-cluster'                 = ('is','is-not','contains','does-not-contain','starts-with')
             'vasset-datacenter'              = ('is','is-not')
             'vasset-host name'               = ('is','is-not','contains','does-not-contain','starts-with')
-            'vasset-power-state'             = ('in','not-in')
+            'vasset-power state'             = ('in','not-in')
             'vasset-resource pool path'      = ('contains','does-not-contain')
             'vulnerability-assessed'         = ('is-on-or-before','is-on-or-after','is-between','is-earlier-than','is-within-the-last')
             'vulnerability-category'         = ('is','is-not','starts-with','ends-with','contains','does-not-contain')
-            'vulnerability-cvss-v3-score'    = ('is','is-not')
             'vulnerability-cvss-score'       = ('is','is-not','in-range','is-greater-than','is-less-than')
+            'vulnerability-cvss-v3-score'    = ('is','is-not')
             'vulnerability-exposures'        = ('includes','does-not-include')
             'vulnerability-title'            = ('contains','does-not-contain','is','is-not','starts-with','ends-with')
             'vulnerability-validated-status' = ('are')
@@ -155,6 +156,7 @@ Function Test-NexposeSearchCriteria {
             [string]$f = $filter.field
             [string]$o = $filter.operator
             [object]$v = $filter.value
+            [object]$a = $filter.values
             [object]$l = $filter.lower
             [object]$u = $filter.upper
 
@@ -164,7 +166,7 @@ Function Test-NexposeSearchCriteria {
                 If ($fields.$f -contains $o) {
                     Switch ($($operators.$o)) {
                         'array' {
-                            If (([string]::IsNullOrEmpty($v) -eq $false) -and ($v.GetType().ToString() -is [array])) {
+                            If (([string]::IsNullOrEmpty($a) -eq $false) -and ($a.Count -gt 0)) {
                                 $ReturnValue[$ReturnCounter] = $true
                             }
                         }
@@ -220,6 +222,12 @@ Function Test-NexposeSearchCriteria {
                             If ([string]::IsNullOrEmpty($v) -eq $false) {
                                 If ($types.$f -contains $v) { $ReturnValue[$ReturnCounter] = $true }
                             }
+                            If ([string]::IsNullOrEmpty($a) -eq $false) {
+                                ForEach ($x in $a) {
+                                    If ($types.$f -contains $x)    { $ReturnValue[$ReturnCounter] = $true  }
+                                    If ($types.$f -notcontains $x) { $ReturnValue[$ReturnCounter] = $false }
+                                }
+                            }
                         }
                     }
                 }
@@ -232,7 +240,7 @@ Function Test-NexposeSearchCriteria {
             }
 
             If ($($ReturnValue[$ReturnCounter]) -eq $false) {
-                Return "Invalid filter value or input type.  Valid entries are: value, lower, upper"
+                Return "Invalid filter value or input type."
             }
             $ReturnCounter++
         }
