@@ -48,7 +48,7 @@ Function New-NexposeAsset {
                 If ([string]::IsNullOrEmpty($checkExisting) -eq $true) {
                     [int]$Site = (Find-NexposeIpTargetSite -IpAddress $ip)
                     If ($Site -gt 0) {
-                        Write-Output (Invoke-NexposeQuery -UrlFunction "sites/$Site/assets" -ApiQuery $apiQuery -RestMethod Post)
+                        Write-Output (Invoke-NexposeQuery -UrlFunction "sites/$Site/assets" -ApiQuery $apiQuery -RestMethod Post -IncludeLinks)
                     }
                     Else {
                         Write-Error 'No valid site found for this IP address'
