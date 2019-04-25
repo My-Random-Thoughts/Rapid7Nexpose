@@ -28,7 +28,7 @@ Function Remove-NexposeTagSearchCriteria {
     [CmdletBinding(SupportsShouldProcess)]
     [System.Diagnostics.CodeAnalysis.SuppressMessageAttribute('PSUseSingularNouns', '', Scope = 'Function')]
     Param (
-        [Parameter(Mandatory = $true)]
+        [Parameter(Mandatory = $true, ValueFromPipeline = $true)]
         [string[]]$Id
     )
 
@@ -36,8 +36,11 @@ Function Remove-NexposeTagSearchCriteria {
     }
 
     Process {
+        [string[]]$pipeLine = $input | ForEach-Object { $_ }    # $input is an automatic variable
+        If ($pipeLine) { $Id = $pipeLine }
+
         ForEach ($item In $Id) {
-            If ($PSCmdlet.ShouldProcess($item)) {
+            If ($PSCmdlet.ShouldProcess()) {
                 $item = (ConvertTo-NexposeId -Name $item -ObjectType Tag)
                 Write-Output (Invoke-NexposeQuery -UrlFunction "tags/$item/search_criteria" -RestMethod Delete)
             }

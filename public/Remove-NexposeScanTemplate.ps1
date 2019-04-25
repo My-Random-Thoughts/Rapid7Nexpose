@@ -24,7 +24,7 @@ Function Remove-NexposeScanTemplate {
 
     [CmdletBinding(SupportsShouldProcess)]
     Param (
-        [Parameter(Mandatory = $true)]
+        [Parameter(Mandatory = $true, ValueFromPipeline = $true)]
         [string[]]$Id
     )
 
@@ -32,8 +32,11 @@ Function Remove-NexposeScanTemplate {
     }
 
     Process {
+        [string[]]$pipeLine = $input | ForEach-Object { $_ }    # $input is an automatic variable
+        If ($pipeLine) { $Id = $pipeLine }
+
         ForEach ($item In $Id) {
-            If ($PSCmdlet.ShouldProcess($item)) {
+            If ($PSCmdlet.ShouldProcess()) {
                 Write-Output (Invoke-NexposeQuery -UrlFunction "scan_templates/$item" -RestMethod Delete)
             }
         }

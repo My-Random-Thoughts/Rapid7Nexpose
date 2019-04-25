@@ -27,19 +27,24 @@ Function Remove-NexposeSite {
 
     [CmdletBinding(SupportsShouldProcess)]
     Param (
-        [Parameter(Mandatory = $true)]
-        [string]$Id
+        [Parameter(Mandatory = $true, ValueFromPipeline = $true)]
+        [string[]]$Id
     )
 
     Begin {
     }
 
     Process {
-        $Id = (ConvertTo-NexposeId -Name $Id -ObjectType Site)
+        [string[]]$pipeLine = $input | ForEach-Object { $_ }    # $input is an automatic variable
+        If ($pipeLine) { $Id = $pipeLine }
 
-        If ($Id -gt 0) {
-            If ($PSCmdlet.ShouldProcess($Id)) {
-                Write-Output (Invoke-NexposeQuery -UrlFunction "sites/$Id" -RestMethod Delete)
+        ForEach ($item In $Id) {
+            $itemId = (ConvertTo-NexposeId -Name $item -ObjectType Site)
+
+            If ($itemId -gt 0) {
+                If ($PSCmdlet.ShouldProcess()) {
+                    Write-Output (Invoke-NexposeQuery -UrlFunction "sites/$itemId" -RestMethod Delete)
+                }
             }
         }
     }

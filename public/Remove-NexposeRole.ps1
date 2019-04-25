@@ -24,16 +24,21 @@ Function Remove-NexposeRole {
 
     [CmdletBinding(SupportsShouldProcess)]
     Param (
-        [Parameter(Mandatory = $true)]
-        [string]$Id
+        [Parameter(Mandatory = $true, ValueFromPipeline = $true)]
+        [string[]]$Id
     )
 
     Begin {
     }
 
     Process {
-        If ($PSCmdlet.ShouldProcess($Command)) {
-            Write-Output (Invoke-NexposeQuery -UrlFunction "roles/$Id" -RestMethod Delete)
+        [string[]]$pipeLine = $input | ForEach-Object { $_ }    # $input is an automatic variable
+        If ($pipeLine) { $Id = $pipeLine }
+
+        ForEach ($item In $Id) {
+            If ($PSCmdlet.ShouldProcess()) {
+                Write-Output (Invoke-NexposeQuery -UrlFunction "roles/$item" -RestMethod Delete)
+            }
         }
     }
 

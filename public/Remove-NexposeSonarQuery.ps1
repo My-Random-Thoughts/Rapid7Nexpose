@@ -24,11 +24,24 @@ Function Remove-NexposeSonarQuery {
 
     [CmdletBinding(SupportsShouldProcess)]
     Param (
-        [Parameter(Mandatory = $true)]
-        [int]$Id
+        [Parameter(Mandatory = $true, ValueFromPipeline = $true)]
+        [int[]]$Id
     )
 
-    If ($PSCmdlet.ShouldProcess($Id)) {
-        Write-Output (Invoke-NexposeQuery -UrlFunction "sonar_queries/$Id" -RestMethod Delete)
+    Begin {
+    }
+
+    Process {
+        [int[]]$pipeLine = $input | ForEach-Object { $_ }    # $input is an automatic variable
+        If ($pipeLine) { $Id = $pipeLine }
+
+        ForEach ($item In $Id) {
+            If ($PSCmdlet.ShouldProcess()) {
+                Write-Output (Invoke-NexposeQuery -UrlFunction "sonar_queries/$Id" -RestMethod Delete)
+            }
+        }
+    }
+
+    End {
     }
 }

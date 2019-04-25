@@ -24,16 +24,21 @@ Function Remove-NexposeScanEngine {
 
     [CmdletBinding(SupportsShouldProcess)]
     Param (
-        [Parameter(Mandatory = $true)]
-        [string]$Id
+        [Parameter(Mandatory = $true, ValueFromPipeline = $true)]
+        [string[]]$Id
     )
 
     Begin {
     }
 
     Process {
-        If ($PSCmdlet.ShouldProcess($Command)) {
-            Write-Output (Invoke-NexposeQuery -UrlFunction "scan_engines/$Id" -RestMethod Delete)
+        [string[]]$pipeLine = $input | ForEach-Object { $_ }    # $input is an automatic variable
+        If ($pipeLine) { $Id = $pipeLine }
+
+        ForEach ($item In $Id) {
+            If ($PSCmdlet.ShouldProcess()) {
+                Write-Output (Invoke-NexposeQuery -UrlFunction "scan_engines/$Id" -RestMethod Delete)
+            }
         }
     }
 

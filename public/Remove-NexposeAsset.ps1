@@ -24,7 +24,7 @@ Function Remove-NexposeAsset {
 
     [CmdletBinding(SupportsShouldProcess)]
     Param (
-        [Parameter(Mandatory = $true)]
+        [Parameter(Mandatory = $true, ValueFromPipeline = $true)]
         [int[]]$Id
     )
 
@@ -32,8 +32,11 @@ Function Remove-NexposeAsset {
     }
 
     Process {
+        [int[]]$pipeLine = $input | ForEach-Object { $_ }    # $input is an automatic variable
+        If ($pipeLine) { $Id = $pipeLine }
+
         ForEach ($item In $Id) {
-            If ($PSCmdlet.ShouldProcess($item)) {
+            If ($PSCmdlet.ShouldProcess()) {
                 Write-Output (Invoke-NexposeQuery -UrlFunction "assets/$item" -RestMethod Delete)
             }
         }

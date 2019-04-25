@@ -27,7 +27,7 @@ Function Remove-NexposeTag {
 
     [CmdletBinding(SupportsShouldProcess)]
     Param (
-        [Parameter(Mandatory = $true)]
+        [Parameter(Mandatory = $true, ValueFromPipeline = $true)]
         [string[]]$Id
     )
 
@@ -35,8 +35,11 @@ Function Remove-NexposeTag {
     }
 
     Process {
+        [string[]]$pipeLine = $input | ForEach-Object { $_ }    # $input is an automatic variable
+        If ($pipeLine) { $Id = $pipeLine }
+
         ForEach ($item In $Id) {
-            If ($PSCmdlet.ShouldProcess($item)) {
+            If ($PSCmdlet.ShouldProcess()) {
                 $item = (ConvertTo-NexposeId -Name $item -ObjectType Tag)
                 Write-Output (Invoke-NexposeQuery -UrlFunction "tags/$item" -RestMethod Delete)
             }
