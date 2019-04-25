@@ -58,15 +58,14 @@ Function Update-NexposeAssetGroup {
         If ([string]::IsNullOrEmpty($Name)           -eq $true) { $Name           = $group.name           }
         If ([string]::IsNullOrEmpty($Description)    -eq $true) { $Description    = $group.description    }
         If ([string]::IsNullOrEmpty($SearchCriteria) -eq $true) { $SearchCriteria = $group.searchCriteria }
-
-        If ([string]::IsNullOrEmpty($Description)    -eq $true) { $Description    =  ' '                  }
+        If ([string]::IsNullOrEmpty($Description)    -eq $true) { $Description    = ' '                   }
     }
 
     Process {
         $apiQuery = @{
-            type           = $Type
-            name           = $Name
-            description    = $Description
+            type        = $Type
+            name        = $Name
+            description = $Description
         }
 
         If ([string]::IsNullOrEmpty($SearchCriteria) -eq $false) {

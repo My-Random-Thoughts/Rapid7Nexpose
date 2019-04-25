@@ -7,10 +7,13 @@ Function Unlock-NexposeUserAccount {
         Unlocks a locked user account that has too many failed authentication attempts. Disabled accounts may not be unlocked.
 
     .PARAMETER Id
-        The identifier of the user.
+        The identifier of one or more users.
 
     .PARAMETER Name
-        The name of the user
+        The name of one or more users.
+
+    .PARAMETER InputObject
+        A user account object from 'Get-NexposeUser'
 
     .EXAMPLE
         Unlock-NexposeUserAccount -Id 42
@@ -28,17 +31,50 @@ Function Unlock-NexposeUserAccount {
     [CmdletBinding(DefaultParameterSetName = 'byId')]
     Param (
         [Parameter(Mandatory = $true, ParameterSetName = 'byId')]
-        [int]$Id,
+        [int[]]$Id,
 
         [Parameter(Mandatory = $true, ParameterSetName = 'byName')]
-        [string]$Name
+        [string[]]$Name,
+
+        [Parameter(Mandatory = $true, ParameterSetName = 'byObject', ValueFromPipeline = $true)]
+        [object[]]$InputObject
     )
 
-    If ($PSCmdlet.ParameterSetName -eq 'byName') {
-        $Id = (ConvertTo-NexposeId -Name $Name -ObjectType 'User')
+    Begin {
+        [int[]]$IdList = @()
+        Switch ($PSCmdlet.ParameterSetName) {
+            'byId'     { $IdList = $Id.Clone() }
+            'byName'   { ForEach ($item In $Name)        { $IdList += (ConvertTo-NexposeId -ObjectType User -Name $item -Verbose:$false) } }
+            'byObject' { ForEach ($item In $InputObject) { $IdList += $item.id } }
+        }
     }
 
-    If ($Id -gt 0) {
-        Write-Output (Invoke-NexposeQuery -UrlFunction "users/$Id/lock" -RestMethod Delete)
+    Process {
+        [int[]]$pipeLine = $input | ForEach-Object { $_.id }    # $input is an automatic variable
+        If ($pipeLine) { $InputObject = $pipeLine } Else { $InputObject = $IdList }
+
+        ForEach ($item In $InputObject) {
+            If ($item -gt 0) {
+                $account = (Get-NexposeUser -Id $item)
+                Write-Verbose "Unlocking user account '$($account.login)'"
+
+                If (($account.locked) -eq $true) {
+                    [void](Invoke-NexposeQuery -UrlFunction "users/$item/lock" -RestMethod Delete)
+                    Write-Output "Account '$($account.login)' unlocked"
+                }
+                Else {
+                    Write-Output "Account '$($account.login)' not locked"
+                }
+            }
+            ElseIf ($item -eq 0) {
+                Write-Error "Unknown user account"
+            }
+            Else {
+                Write-Error "Unknown input type"
+            }
+        }
+    }
+
+    End {
     }
 }
