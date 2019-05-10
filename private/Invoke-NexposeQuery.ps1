@@ -88,42 +88,54 @@ Function Invoke-NexposeQuery {
             # Add page number to URL for "Get-NexposeAsset" search function
             If ($RestMethod -eq 'POST') {
                 [int]$currPage = ([regex]::Match($iRestM.Uri, '(?:&page=)([0-9]{1,})(?:&)').Groups[1].Value)
-                If ($currPage -eq 0) { $iRestM.Uri                                          += "&page=$($ApiQuery.Page)"  }
-                Else                 { $iRestM.Uri = $iRestM.Uri.Replace("&page=$($currPage)", "&page=$($ApiQuery.Page)") }
+                If ($currPage -eq 0) { $iRestM.Uri += '&page=0' }
             }
         }
 
+
         Try {
             Write-Verbose "Executing API method `"$($RestMethod.ToString().ToUpper())`" against `"$($iRestM.Uri)`""
-            Write-Verbose "ApiQuery:`n$($ApiQuery | ConvertTo-Json -Depth 100)"
-            $Output = (Invoke-RestMethod @iRestM -Verbose:$false -TimeoutSec 300 -ErrorAction Stop)    # 5 minutes
+            If ($ApiQuery) { Write-Verbose "ApiQuery:`n$($ApiQuery | ConvertTo-Json -Depth 100)" }
+            $Output = (Invoke-RestMethod @iRestM -Verbose:$false -TimeoutSec 300 -ErrorAction Stop)
+
+            If ([string]::IsNullOrEmpty($Output) -eq $true) {
+                Return $null
+            }
 
             # Remove the "LINKS" section of the output, by default
             If ((Get-Variable -Name 'NexposeShowLinks' -ValueOnly -ErrorAction SilentlyContinue) -eq $true) { $IncludeLinks = $true }
             If (-not $IncludeLinks.IsPresent) { $Output = (Remove-NexposeLink -InputObject $Output) }
 
-            If ([string]::IsNullOrEmpty($Output) -eq $false) {
-            [boolean]$script:moreData = $false
-            [boolean]$script:morePage = $false
-            $Output | Get-Member -MemberType *Property | `
-                ForEach-Object -Process {
-                    If (($_.Name) -eq 'resources') { $script:moreData = $true }
-                    If (($_.Name) -eq 'page'     ) { $script:morePage = $true }
-                }
-            }
-
-            If ($script:morePage -eq $true) {
-                # If more pages exist, write out everything
-                Write-Output $Output
+            If ($script:resources) {
+                Write-Output $Output.resources
             }
             Else {
-                If ($script:moreData -eq $true) {
-                    # If 'resources' exist, write out just that
+                Write-Output $Output
+            }
+
+            # Check for single or multiple pages and resources
+            [boolean]$script:resources = $false
+            [boolean]$script:page      = $false
+            $Output | Get-Member -MemberType *Property | ForEach-Object -Process {
+                If (($_.Name) -eq 'resources') { $script:resources = $true }
+                If (($_.Name) -eq 'page'     ) { $script:page      = $true }
+            }
+
+            # Output for any additional pages
+            [int]$totalPages = ($Output.page.totalPages)
+            If (($script:page -eq $true) -and ($totalPages -gt 1)) {
+                [int]$totalLength = $($totalPages).ToString().Trim().Length
+
+                2..$totalPages | ForEach-Object -Process {
+                    Write-Verbose "Retreving page $($_.ToString().PadLeft($totalLength)) of $totalPages ..."
+
+                    [int]$currPage = ([regex]::Match($iRestM.Uri, '(?:&page=)([0-9]{1,})(?:&)').Groups[1].Value)
+                    $iRestM.Uri = $iRestM.Uri.Replace("&page=$($currPage)", "&page=$($_ - 1)")
+
+                    $Output = (Invoke-RestMethod @iRestM -Verbose:$false -TimeoutSec 300 -ErrorAction Stop).resources
+                    If (-not $IncludeLinks.IsPresent) { $Output = (Remove-NexposeLink -InputObject $Output) }
+
                     Write-Output $Output.resources
-                }
-                Else {
-                    # Write out everything
-                    Write-Output $Output
                 }
             }
         }
