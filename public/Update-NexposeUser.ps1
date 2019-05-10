@@ -69,7 +69,7 @@ Function Update-NexposeUser {
 
     DynamicParam {
         $dynParam = (New-Object -Type 'System.Management.Automation.RuntimeDefinedParameterDictionary')
-        New-DynamicParameter -Dictionary $dynParam -Name 'Role' -Type 'string' -ValidateSet @((Get-NexposePagedData -UrlFunction 'roles' -RestMethod Get).id)
+        New-DynamicParameter -Dictionary $dynParam -Name 'Role' -Type 'string' -ValidateSet @((Invoke-NexposeQuery -UrlFunction 'roles' -RestMethod Get).id)
         Return $dynParam
     }
 
