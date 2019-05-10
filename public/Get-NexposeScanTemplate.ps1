@@ -32,6 +32,6 @@ Function Get-NexposeScanTemplate {
         Write-Output (Invoke-NexposeQuery -UrlFunction "scan_templates/$Id" -RestMethod Get)
     }
     Else {
-        Write-Output @(Get-NexposePagedData -UrlFunction 'scan_templates' -RestMethod Get)    # Return All
+        Write-Output @(Invoke-NexposeQuery -UrlFunction 'scan_templates' -RestMethod Get)    # Return All
     }
 }

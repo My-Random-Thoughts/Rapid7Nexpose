@@ -51,7 +51,7 @@ Function Get-NexposeSite {
                 Write-Output (Invoke-NexposeQuery -UrlFunction "sites/$Id" -RestMethod Get)
             }
             Else {
-                Write-Output @(Get-NexposePagedData -UrlFunction 'sites' -RestMethod Get)    # Return All
+                Write-Output @(Invoke-NexposeQuery -UrlFunction 'sites' -RestMethod Get)    # Return All
             }
         }
 

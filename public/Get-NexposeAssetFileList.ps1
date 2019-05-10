@@ -28,5 +28,5 @@ Function Get-NexposeAssetFileList {
         [int]$Id
     )
 
-    Write-Output @(Get-NexposePagedData -UrlFunction "assets/$Id/files" -RestMethod Get)
+    Write-Output @(Invoke-NexposeQuery -UrlFunction "assets/$Id/files" -RestMethod Get)
 }

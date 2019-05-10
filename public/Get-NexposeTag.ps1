@@ -68,7 +68,7 @@ Function Get-NexposeTag {
                 Write-Output (Invoke-NexposeQuery -UrlFunction "tags/$Id" -RestMethod Get)
             }
             Else {
-                Write-Output @(Get-NexposePagedData -UrlFunction 'tags' -RestMethod Get)    # Return All
+                Write-Output @(Invoke-NexposeQuery -UrlFunction 'tags' -RestMethod Get)    # Return All
             }
         }
 

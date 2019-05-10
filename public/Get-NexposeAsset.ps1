@@ -89,13 +89,13 @@ Function Get-NexposeAsset {
                 Write-Output (Invoke-NexposeQuery -UrlFunction "assets/$Id" -RestMethod Get)
             }
             Else {
-                Write-Output @(Get-NexposePagedData -UrlFunction 'assets' -RestMethod Get)    # Return All
+                Write-Output @(Invoke-NexposeQuery -UrlFunction 'assets' -RestMethod Get)    # Return All
             }
         }
 
         'byGroup' {
             $Group = (ConvertTo-NexposeId -Name $Group -ObjectType 'AssetGroup')
-            [object]$assets = @(Get-NexposePagedData -UrlFunction "asset_groups/$Group/assets" -RestMethod Get)
+            [object]$assets = @(Invoke-NexposeQuery -UrlFunction "asset_groups/$Group/assets" -RestMethod Get)
 
             If ([string]::IsNullOrEmpty($assets) -eq $false) {
                 ForEach ($id In $assets) {
@@ -155,7 +155,7 @@ Function Get-NexposeAsset {
             If ($value -is [array]) { $apiQuery.filters[0].Remove('value')  }
             Else                    { $apiQuery.filters[0].Remove('values') }
 
-            [object]$assetData = @(Get-NexposePagedData -UrlFunction 'assets/search' -ApiQuery $apiQuery -RestMethod Post)
+            [object]$assetData = @(Invoke-NexposeQuery -UrlFunction 'assets/search' -ApiQuery $apiQuery -RestMethod Post)
             If ([string]::IsNullOrEmpty($assetData.id) -eq $false) {
                 Write-Output $assetData
             }

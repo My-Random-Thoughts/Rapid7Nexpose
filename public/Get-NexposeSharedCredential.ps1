@@ -72,12 +72,12 @@ Function Get-NexposeSharedCredential {
                 Write-Output (Invoke-NexposeQuery -UrlFunction "shared_credentials/$Id" -RestMethod Get)
             }
             Else {
-                Write-Output @(Get-NexposePagedData -UrlFunction 'shared_credentials' -RestMethod Get)    # Return All
+                Write-Output @(Invoke-NexposeQuery -UrlFunction 'shared_credentials' -RestMethod Get)    # Return All
             }
         }
 
         'byName' {
-            [int]$getId = (((Get-NexposePagedData -UrlFunction 'shared_credentials' -RestMethod Get) | Where-Object { $_.name -eq $Name }).id)
+            [int]$getId = (((Invoke-NexposeQuery -UrlFunction 'shared_credentials' -RestMethod Get) | Where-Object { $_.name -eq $Name }).id)
             If ($getId -gt 0) {
                 Get-NexposeSharedCredential -Id $getId
             }
@@ -85,7 +85,7 @@ Function Get-NexposeSharedCredential {
 
         'bySite' {
             If ($IncludeShared.IsPresent) {
-                Write-Output @(Get-NexposePagedData -UrlFunction 'shared_credentials' -RestMethod Get)
+                Write-Output @(Invoke-NexposeQuery -UrlFunction 'shared_credentials' -RestMethod Get)
             }
             Else {
                 # Call external function
@@ -99,7 +99,7 @@ Function Get-NexposeSharedCredential {
                 'byUsername' { [string]$object = 'username'; [string]$vari = $Username }
             }
 
-            Write-Output @((Get-NexposePagedData -UrlFunction 'shared_credentials' -RestMethod Get) | Where-Object { $_.account.$object -eq $vari })
+            Write-Output @((Invoke-NexposeQuery -UrlFunction 'shared_credentials' -RestMethod Get) | Where-Object { $_.account.$object -eq $vari })
         }
     }
 }

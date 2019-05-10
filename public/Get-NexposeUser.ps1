@@ -83,7 +83,7 @@ Function Get-NexposeUser {
     DynamicParam {
         $dynParam = (New-Object -Type 'System.Management.Automation.RuntimeDefinedParameterDictionary')
         New-DynamicParameter -Dictionary $dynParam -Name 'Privilege' -Type 'string' -ParameterSetName 'byPriv' -ValidateSet (Get-NexposePrivilege)
-        New-DynamicParameter -Dictionary $dynParam -Name 'Role'      -Type 'string' -ParameterSetName 'byRole' -ValidateSet (@((Get-NexposePagedData -UrlFunction 'roles' -RestMethod Get).id))
+        New-DynamicParameter -Dictionary $dynParam -Name 'Role'      -Type 'string' -ParameterSetName 'byRole' -ValidateSet (@((Invoke-NexposeQuery -UrlFunction 'roles' -RestMethod Get).id))
         Return $dynParam
     }
 
@@ -122,7 +122,7 @@ Function Get-NexposeUser {
                     Write-Output $userDetails
                 }
                 Else {
-                    Write-Output @(Get-NexposePagedData -UrlFunction 'users' -RestMethod Get)    # Return All
+                    Write-Output @(Invoke-NexposeQuery -UrlFunction 'users' -RestMethod Get)    # Return All
                 }
             }
 
@@ -144,11 +144,11 @@ Function Get-NexposeUser {
 
             Default {
                 Switch ($PSCmdlet.ParameterSetName) {
-                    'byRole' { $users = @(Get-NexposePagedData -UrlFunction "roles/$Role/users"           -RestMethod Get) }
-                    'byPriv' { $users = @(Get-NexposePagedData -UrlFunction "privileges/$Privilege/users" -RestMethod Get) }
+                    'byRole' { $users = @(Invoke-NexposeQuery -UrlFunction "roles/$Role/users"           -RestMethod Get) }
+                    'byPriv' { $users = @(Invoke-NexposeQuery -UrlFunction "privileges/$Privilege/users" -RestMethod Get) }
                     'byAuth' {
                         $authId = (ConvertTo-NexposeId -Name $AuthenticationSource -ObjectType AuthSource)
-                        $users  = @(Get-NexposePagedData -UrlFunction "authentication_sources/$authId/users"   -RestMethod Get)
+                        $users  = @(Invoke-NexposeQuery -UrlFunction "authentication_sources/$authId/users"   -RestMethod Get)
                     }
                 }
 

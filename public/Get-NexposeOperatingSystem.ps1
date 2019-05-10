@@ -32,6 +32,6 @@ Function Get-NexposeOperatingSystem {
         Write-Output (Invoke-NexposeQuery -UrlFunction "operating_systems/$Id" -RestMethod Get)
     }
     Else {
-        Write-Output @(Get-NexposePagedData -UrlFunction 'operating_systems' -RestMethod Get)    # Return All
+        Write-Output @(Invoke-NexposeQuery -UrlFunction 'operating_systems' -RestMethod Get)    # Return All
     }
 }

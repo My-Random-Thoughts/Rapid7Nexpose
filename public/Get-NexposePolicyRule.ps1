@@ -87,19 +87,19 @@ Function Get-NexposePolicyRule {
             If ($RuleId -gt 0) {
                 [string]$uri = "policies/$PolicyId/rules/$RuleId"
                 $rule = (Invoke-NexposeQuery -UrlFunction $uri -RestMethod Get)
-                If ($IncludeAssets.IsPresent)      { $rule | Add-Member -Name 'assets'      -Value @(Get-NexposePagedData -UrlFunction "$uri/assets"      -RestMethod Get) -MemberType NoteProperty }
-                If ($IncludeControls.IsPresent)    { $rule | Add-Member -Name 'controls'    -Value @(Get-NexposePagedData -UrlFunction "$uri/controls"    -RestMethod Get) -MemberType NoteProperty }
-                If ($IncludeRationale.IsPresent)   { $rule | Add-Member -Name 'rationale'   -Value @(Get-NexposePagedData -UrlFunction "$uri/rationale"   -RestMethod Get) -MemberType NoteProperty }
-                If ($IncludeRemediation.IsPresent) { $rule | Add-Member -Name 'remediation' -Value @(Get-NexposePagedData -UrlFunction "$uri/remediation" -RestMethod Get) -MemberType NoteProperty }
+                If ($IncludeAssets.IsPresent)      { $rule | Add-Member -Name 'assets'      -Value @(Invoke-NexposeQuery -UrlFunction "$uri/assets"      -RestMethod Get) -MemberType NoteProperty }
+                If ($IncludeControls.IsPresent)    { $rule | Add-Member -Name 'controls'    -Value @(Invoke-NexposeQuery -UrlFunction "$uri/controls"    -RestMethod Get) -MemberType NoteProperty }
+                If ($IncludeRationale.IsPresent)   { $rule | Add-Member -Name 'rationale'   -Value @(Invoke-NexposeQuery -UrlFunction "$uri/rationale"   -RestMethod Get) -MemberType NoteProperty }
+                If ($IncludeRemediation.IsPresent) { $rule | Add-Member -Name 'remediation' -Value @(Invoke-NexposeQuery -UrlFunction "$uri/remediation" -RestMethod Get) -MemberType NoteProperty }
                 Write-Output $rule
             }
             Else {
-                Write-Output @(Get-NexposePagedData -UrlFunction "policies/$PolicyId/rules" -RestMethod Get)    # Return All
+                Write-Output @(Invoke-NexposeQuery -UrlFunction "policies/$PolicyId/rules" -RestMethod Get)    # Return All
             }
         }
 
         'byDisabled' {
-            Write-Output (Get-NexposePagedData -UrlFunction "policies/$PolicyId/rules/disabled" -RestMethod Get)
+            Write-Output (Invoke-NexposeQuery -UrlFunction "policies/$PolicyId/rules/disabled" -RestMethod Get)
         }
     }
 }

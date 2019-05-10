@@ -59,7 +59,7 @@ Function Get-NexposeScanEngine {
                 Write-Output (Invoke-NexposeQuery -UrlFunction "scan_engines/$Id" -RestMethod Get)
             }
             Else {
-                Write-Output @(Get-NexposePagedData -UrlFunction 'scan_engines' -RestMethod Get)    # Return All
+                Write-Output @(Invoke-NexposeQuery -UrlFunction 'scan_engines' -RestMethod Get)    # Return All
             }
         }
 
@@ -68,7 +68,7 @@ Function Get-NexposeScanEngine {
         }
 
         Default {
-            $Engines = @(Get-NexposePagedData -UrlFunction 'scan_engines' -RestMethod Get)
+            $Engines = @(Invoke-NexposeQuery -UrlFunction 'scan_engines' -RestMethod Get)
             Switch ($PSCmdlet.ParameterSetName) {
                 'byName'    { Write-Output @($Engines | Where-Object { $_.name    -eq       $Name    }) }
                 'byAddress' { Write-Output @($Engines | Where-Object { $_.address -eq       $Address }) }

@@ -55,7 +55,7 @@ Function Get-NexposeReportHistory {
         }
 
         'byName' {
-            $Name = (((Get-NexposePagedData -UrlFunction 'reports' -RestMethod Get) | Where-Object { $_.Name -eq $Name }).id)
+            $Name = (((Invoke-NexposeQuery -UrlFunction 'reports' -RestMethod Get) | Where-Object { $_.Name -eq $Name }).id)
             Get-NexposeReportHistory -Id $Name -HistoryId $HistoryId
         }
     }

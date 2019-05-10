@@ -32,6 +32,6 @@ Function Get-NexposeAuthenticationSource {
         Write-Output (Invoke-NexposeQuery -UrlFunction "authentication_sources/$Id" -RestMethod Get)
         }
     Else {
-        Write-Output @(Get-NexposePagedData -UrlFunction 'authentication_sources' -RestMethod Get)    # Return All
+        Write-Output @(Invoke-NexposeQuery -UrlFunction 'authentication_sources' -RestMethod Get)    # Return All
     }
 }

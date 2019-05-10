@@ -28,7 +28,7 @@ Function Get-NexposeAssetGroup {
         GET: asset_groups
         GET: asset_groups/{id}
         GET: tags/{id}/asset_groups
-        GET: SKIPPED - asset_groups/{id}/search_criteria    # Retuend in data below
+        GET: SKIPPED - asset_groups/{id}/search_criteria    # Returned in data below
 
     .LINK
         https://github.com/My-Random-Thoughts/Rapid7Nexpose
@@ -52,7 +52,7 @@ Function Get-NexposeAssetGroup {
                 Write-Output (Invoke-NexposeQuery -UrlFunction "asset_groups/$Id" -RestMethod Get)
             }
             Else {
-                Write-Output @(Get-NexposePagedData -UrlFunction 'asset_groups' -RestMethod Get)    # Return All
+                Write-Output @(Invoke-NexposeQuery -UrlFunction 'asset_groups' -RestMethod Get)    # Return All
             }
         }
 

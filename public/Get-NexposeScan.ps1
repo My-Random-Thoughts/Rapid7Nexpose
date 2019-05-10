@@ -64,8 +64,8 @@ Function Get-NexposeScan {
         )
 
         [System.Collections.ArrayList]$results = @()
-        $results.AddRange(@(Get-NexposePagedData -UrlFunction $URI -ApiQuery @{ active = 'true'  } -RestMethod Get))
-        $results.AddRange(@(Get-NexposePagedData -UrlFunction $URI -ApiQuery @{ active = 'false' } -RestMethod Get))
+        $results.AddRange(@(Invoke-NexposeQuery -UrlFunction $URI -ApiQuery @{ active = 'true'  } -RestMethod Get))
+        $results.AddRange(@(Invoke-NexposeQuery -UrlFunction $URI -ApiQuery @{ active = 'false' } -RestMethod Get))
 
         If ([string]::IsNullOrEmpty($Filter) -eq $false) {
             $data = ($results | Where-Object { $_.status -eq $Filter })

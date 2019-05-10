@@ -40,5 +40,5 @@ Function Get-NexposeAssetPolicyRuleProof {
         [int]$AssetId
     )
 
-    Write-Output @(Get-NexposePagedData -UrlFunction "policies/$PolicyId/rules/$RuleId/assets/$AssetId/proof" -RestMethod Get)
+    Write-Output @(Invoke-NexposeQuery -UrlFunction "policies/$PolicyId/rules/$RuleId/assets/$AssetId/proof" -RestMethod Get)
 }

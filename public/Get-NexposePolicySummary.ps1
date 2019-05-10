@@ -19,5 +19,5 @@ Function Get-NexposePolicySummary {
         https://github.com/My-Random-Thoughts/Rapid7Nexpose
 #>
 
-    Write-Output @(Get-NexposePagedData -UrlFunction 'policy/summary' -RestMethod Get)
+    Write-Output @(Invoke-NexposeQuery -UrlFunction 'policy/summary' -RestMethod Get)
 }

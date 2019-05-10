@@ -81,12 +81,12 @@ Function Get-NexposeSiteCredential {
                 Write-Output (Invoke-NexposeQuery -UrlFunction "sites/$Site/site_credentials/$Id" -RestMethod Get)
             }
             Else {
-                Write-Output @(Get-NexposePagedData -UrlFunction "sites/$Site/site_credentials"                -RestMethod Get)    # Return All
+                Write-Output @(Invoke-NexposeQuery -UrlFunction "sites/$Site/site_credentials"                -RestMethod Get)    # Return All
             }
         }
 
         'byName' {
-            [int]$getId = (((Get-NexposePagedData -UrlFunction "sites/$Site/site_credentials" -RestMethod Get) | Where-Object { $_.name -eq $Name }).id)
+            [int]$getId = (((Invoke-NexposeQuery -UrlFunction "sites/$Site/site_credentials" -RestMethod Get) | Where-Object { $_.name -eq $Name }).id)
             If ($getId -gt 0) {
                 Get-NexposeSiteCredential -Site $Site -Id $getId
             }
@@ -110,7 +110,7 @@ Function Get-NexposeSiteCredential {
                 'byUsername' { [string]$object = 'username'; [string]$vari = $Username }
             }
 
-            Write-Output @((Get-NexposePagedData -UrlFunction "sites/$Site/site_credentials" -RestMethod Get) | Where-Object { $_.account.$object -eq $vari })
+            Write-Output @((Invoke-NexposeQuery -UrlFunction "sites/$Site/site_credentials" -RestMethod Get) | Where-Object { $_.account.$object -eq $vari })
         }
     }
 }

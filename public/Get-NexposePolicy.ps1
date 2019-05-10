@@ -98,20 +98,20 @@ Function Get-NexposePolicy {
             If ($Id -gt 0) {
                 [string]$uri = "policies/$Id"
                 $policy = (Invoke-NexposeQuery -UrlFunction $uri -RestMethod Get)
-                If ($IncludeAssets.IsPresent)   { $policy | Add-Member -Name 'assets'   -Value @(Get-NexposePagedData -UrlFunction "$uri/assets"   -RestMethod Get) -MemberType NoteProperty }
-                If ($IncludeChildren.IsPresent) { $policy | Add-Member -Name 'children' -Value @(Get-NexposePagedData -UrlFunction "$uri/children" -RestMethod Get) -MemberType NoteProperty }
-                If ($IncludeGroups.IsPresent)   { $policy | Add-Member -Name 'groups'   -Value @(Get-NexposePagedData -UrlFunction "$uri/groups"   -RestMethod Get) -MemberType NoteProperty }
-                If ($IncludeRules.IsPresent)    { $policy | Add-Member -Name 'rules'    -Value @(Get-NexposePagedData -UrlFunction "$uri/rules"    -RestMethod Get) -MemberType NoteProperty }
+                If ($IncludeAssets.IsPresent)   { $policy | Add-Member -Name 'assets'   -Value @(Invoke-NexposeQuery -UrlFunction "$uri/assets"   -RestMethod Get) -MemberType NoteProperty }
+                If ($IncludeChildren.IsPresent) { $policy | Add-Member -Name 'children' -Value @(Invoke-NexposeQuery -UrlFunction "$uri/children" -RestMethod Get) -MemberType NoteProperty }
+                If ($IncludeGroups.IsPresent)   { $policy | Add-Member -Name 'groups'   -Value @(Invoke-NexposeQuery -UrlFunction "$uri/groups"   -RestMethod Get) -MemberType NoteProperty }
+                If ($IncludeRules.IsPresent)    { $policy | Add-Member -Name 'rules'    -Value @(Invoke-NexposeQuery -UrlFunction "$uri/rules"    -RestMethod Get) -MemberType NoteProperty }
                 Write-Output $policy
             }
             Else {
-                Write-Output @(Get-NexposePagedData -UrlFunction 'policies' -RestMethod Get)    # Return All
+                Write-Output @(Invoke-NexposeQuery -UrlFunction 'policies' -RestMethod Get)    # Return All
             }
         }
 
         'bySearch' {
             [hashtable]$apiQuery = @{ filter = $Search }
-            $results = @(Get-NexposePagedData -UrlFunction 'policies' -ApiQuery $apiQuery -RestMethod Get)
+            $results = @(Invoke-NexposeQuery -UrlFunction 'policies' -ApiQuery $apiQuery -RestMethod Get)
             If (-not $IncludeDeprecated.IsPresent) {
                 $results = $results | Where-Object { $_.title -notlike '*(deprecated)' }
             }
@@ -120,7 +120,7 @@ Function Get-NexposePolicy {
 
         'byAsset' {
             [hashtable]$apiQuery = @{ applicableOnly = $true }
-            Write-Output @(Get-NexposePagedData -UrlFunction "assets/$AssetId/policies" -ApiQuery $apiQuery -RestMethod Get)
+            Write-Output @(Invoke-NexposeQuery -UrlFunction "assets/$AssetId/policies" -ApiQuery $apiQuery -RestMethod Get)
         }
     }
 }

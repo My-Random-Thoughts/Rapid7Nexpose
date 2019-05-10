@@ -28,5 +28,5 @@ Function Get-NexposeAssetDatabase {
         [int]$Id
     )
 
-    Write-Output @(Get-NexposePagedData -UrlFunction "assets/$Id/databases" -RestMethod Get)
+    Write-Output @(Invoke-NexposeQuery -UrlFunction "assets/$Id/databases" -RestMethod Get)
 }

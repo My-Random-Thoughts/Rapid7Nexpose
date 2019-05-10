@@ -32,6 +32,6 @@ Function Get-NexposeDiscoveryConnection {
         Write-Output (Invoke-NexposeQuery -UrlFunction "discovery_connections/$Id" -RestMethod Get)
     }
     Else {
-        Write-Output @(Get-NexposePagedData -UrlFunction 'discovery_connections' -RestMethod Get)    # Return All
+        Write-Output @(Invoke-NexposeQuery -UrlFunction 'discovery_connections' -RestMethod Get)    # Return All
     }
 }

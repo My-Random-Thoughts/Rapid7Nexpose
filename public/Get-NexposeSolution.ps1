@@ -50,16 +50,16 @@ Function Get-NexposeSolution {
     )
 
     If ([string]::IsNullOrEmpty($Id) -eq $true) {
-        Write-Output @(Get-NexposePagedData -UrlFunction 'solutions' -RestMethod Get)    # Return All
+        Write-Output @(Invoke-NexposeQuery -UrlFunction 'solutions' -RestMethod Get)    # Return All
     }
     Else {
         [string]$uri = "solutions/$Id"
         $solu = (Invoke-NexposeQuery -UrlFunction $uri -RestMethod Get -ErrorAction Stop)
 
         # Include the additional properties...
-        $solu | Add-Member -Name 'prerequisites' -Value @(Get-NexposePagedData -UrlFunction "$uri/prerequisites" -RestMethod Get) -MemberType NoteProperty
-        $solu | Add-Member -Name 'supersedes'    -Value @(Get-NexposePagedData -UrlFunction "$uri/supersedes"    -RestMethod Get) -MemberType NoteProperty
-        $solu | Add-Member -Name 'superseding'   -Value @(Get-NexposePagedData -UrlFunction "$uri/superseding"   -RestMethod Get) -MemberType NoteProperty
+        $solu | Add-Member -Name 'prerequisites' -Value @(Invoke-NexposeQuery -UrlFunction "$uri/prerequisites" -RestMethod Get) -MemberType NoteProperty
+        $solu | Add-Member -Name 'supersedes'    -Value @(Invoke-NexposeQuery -UrlFunction "$uri/supersedes"    -RestMethod Get) -MemberType NoteProperty
+        $solu | Add-Member -Name 'superseding'   -Value @(Invoke-NexposeQuery -UrlFunction "$uri/superseding"   -RestMethod Get) -MemberType NoteProperty
 
         Write-Output $solu
     }

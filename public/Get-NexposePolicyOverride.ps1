@@ -65,7 +65,7 @@ Function Get-NexposePolicyOverride {
                 Write-Output (Invoke-NexposeQuery -UrlFunction "policy_overrides/$Id" -RestMethod Get)
             }
             Else {
-                Write-Output @(Get-NexposePagedData -UrlFunction 'policy_overrides' -RestMethod Get)    # Return All
+                Write-Output @(Invoke-NexposeQuery -UrlFunction 'policy_overrides' -RestMethod Get)    # Return All
             }
         }
 
@@ -74,7 +74,7 @@ Function Get-NexposePolicyOverride {
         }
 
         'byOther' {
-            $polOvr = @(Get-NexposePagedData -UrlFunction 'policy_overrides' -RestMethod Get)
+            $polOvr = @(Invoke-NexposeQuery -UrlFunction 'policy_overrides' -RestMethod Get)
 
             If ([string]::IsNullOrEmpty($SubmittedBy) -eq $false) {
                 [int]$UserSId = (ConvertTo-NexposeId -Name $SubmittedBy -ObjectType User)

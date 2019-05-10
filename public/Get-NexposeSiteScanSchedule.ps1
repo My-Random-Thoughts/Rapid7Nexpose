@@ -55,7 +55,7 @@ Function Get-NexposeSiteScanSchedule {
                 Write-Output (Invoke-NexposeQuery -UrlFunction "sites/$Id/scan_schedules/$ScheduleId" -RestMethod Get)
             }
             Else {
-                Write-Output @(Get-NexposePagedData -UrlFunction "sites/$Id/scan_schedules" -RestMethod Get)    # Return All
+                Write-Output @(Invoke-NexposeQuery -UrlFunction "sites/$Id/scan_schedules" -RestMethod Get)    # Return All
             }
         }
     }

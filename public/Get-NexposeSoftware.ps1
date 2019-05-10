@@ -63,22 +63,22 @@ Function Get-NexposeSoftware {
                 Write-Output (Invoke-NexposeQuery -UrlFunction "software/$Id" -RestMethod Get)
             }
             Else {
-                Write-Output @(Get-NexposePagedData -UrlFunction 'software' -RestMethod Get)    # Return All
+                Write-Output @(Invoke-NexposeQuery -UrlFunction 'software' -RestMethod Get)    # Return All
             }
         }
 
         'byName' {
-            Write-Output @((Get-NexposePagedData -UrlFunction 'software' -RestMethod Get) |
+            Write-Output @((Invoke-NexposeQuery -UrlFunction 'software' -RestMethod Get) |
                 Where-Object { ($_.product -like "*$Name*") -or ($_.description -like "*$Name*") })
         }
 
         'byVendor' {
-            Write-Output @((Get-NexposePagedData -UrlFunction 'software' -RestMethod Get) | Where-Object { $_.vendor -eq $Vendor })
+            Write-Output @((Invoke-NexposeQuery -UrlFunction 'software' -RestMethod Get) | Where-Object { $_.vendor -eq $Vendor })
         }
 
         'byAsset' {
             $Asset = (ConvertTo-NexposeId -Name $Asset -ObjectType 'Asset')
-            Write-Output @(Get-NexposePagedData -UrlFunction "assets/$Asset/software" -RestMethod Get)
+            Write-Output @(Invoke-NexposeQuery -UrlFunction "assets/$Asset/software" -RestMethod Get)
         }
     }
 }

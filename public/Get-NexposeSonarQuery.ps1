@@ -43,6 +43,6 @@ Function Get-NexposeSonarQuery {
         Write-Output $Output
     }
     Else {
-        Write-Output @(Get-NexposePagedData -UrlFunction 'sonar_queries' -RestMethod Get)    # Return All
+        Write-Output @(Invoke-NexposeQuery -UrlFunction 'sonar_queries' -RestMethod Get)    # Return All
     }
 }

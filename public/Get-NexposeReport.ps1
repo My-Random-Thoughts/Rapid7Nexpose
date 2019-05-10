@@ -63,7 +63,7 @@ Function Get-NexposeReport {
                 Write-Output (Invoke-NexposeQuery -UrlFunction "reports/$Id" -RestMethod Get)
             }
             Else {
-                Write-Output @(Get-NexposePagedData -UrlFunction 'reports' -RestMethod Get)    # Return All
+                Write-Output @(Invoke-NexposeQuery -UrlFunction 'reports' -RestMethod Get)    # Return All
             }
         }
 
@@ -74,7 +74,7 @@ Function Get-NexposeReport {
 
         'byPolicy' {
             $Policy = (ConvertTo-NexposeId -Name $Policy -ObjectType 'Policy')
-            Write-Output @((Get-NexposePagedData -UrlFunction 'reports' -RestMethod Get) | Where-Object { $Policy -in $_.Policies})
+            Write-Output @((Invoke-NexposeQuery -UrlFunction 'reports' -RestMethod Get) | Where-Object { $Policy -in $_.Policies})
         }
 
         'byScope' {
@@ -85,7 +85,7 @@ Function Get-NexposeReport {
                 'Tags'        { $scope = ((ConvertTo-NexposeId -Name $scope -ObjectType 'Tag'       ).id) }
             }
 
-            Write-Output @((Get-NexposePagedData -UrlFunction 'reports' -RestMethod Get) | Where-Object { $Scope -in ($_.Scope.$ScopeType) })
+            Write-Output @((Invoke-NexposeQuery -UrlFunction 'reports' -RestMethod Get) | Where-Object { $Scope -in ($_.Scope.$ScopeType) })
         }
     }
 }

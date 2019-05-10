@@ -65,12 +65,12 @@ Function Get-NexposePolicyGroup {
             If ($GroupId -gt 0) {
                 [string]$uri = "policies/$PolicyId/groups/$GroupId"
                 $group = (Invoke-NexposeQuery -UrlFunction $uri -RestMethod Get)
-                If ($IncludeChildren.IsPresent) { $group | Add-Member -Name 'children' -Value @(Get-NexposePagedData -UrlFunction "$uri/children" -RestMethod Get) -MemberType NoteProperty }
-                If ($IncludeRules.IsPresent)    { $group | Add-Member -Name 'rules'    -Value @(Get-NexposePagedData -UrlFunction "$uri/rules"    -RestMethod Get) -MemberType NoteProperty }
+                If ($IncludeChildren.IsPresent) { $group | Add-Member -Name 'children' -Value @(Invoke-NexposeQuery -UrlFunction "$uri/children" -RestMethod Get) -MemberType NoteProperty }
+                If ($IncludeRules.IsPresent)    { $group | Add-Member -Name 'rules'    -Value @(Invoke-NexposeQuery -UrlFunction "$uri/rules"    -RestMethod Get) -MemberType NoteProperty }
                 Write-Output $group
             }
             Else {
-                Write-Output @(Get-NexposePagedData -UrlFunction "policies/$PolicyId/groups" -RestMethod Get)    # Return All
+                Write-Output @(Invoke-NexposeQuery -UrlFunction "policies/$PolicyId/groups" -RestMethod Get)    # Return All
             }
         }
 
