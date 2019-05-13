@@ -106,19 +106,19 @@ Function Invoke-NexposeQuery {
             If ((Get-Variable -Name 'NexposeShowLinks' -ValueOnly -ErrorAction SilentlyContinue) -eq $true) { $IncludeLinks = $true }
             If (-not $IncludeLinks.IsPresent) { $Output = (Remove-NexposeLink -InputObject $Output) }
 
-            If ($script:resources) {
-                Write-Output $Output.resources
-            }
-            Else {
-                Write-Output $Output
-            }
-
             # Check for single or multiple pages and resources
             [boolean]$script:resources = $false
             [boolean]$script:page      = $false
             $Output | Get-Member -MemberType *Property | ForEach-Object -Process {
                 If (($_.Name) -eq 'resources') { $script:resources = $true }
                 If (($_.Name) -eq 'page'     ) { $script:page      = $true }
+            }
+
+            If ($script:resources) {
+                Write-Output $Output.resources
+            }
+            Else {
+                Write-Output $Output
             }
 
             # Output for any additional pages
