@@ -75,7 +75,7 @@
 
         [string]$IntervalText,
 
-        [ValidateRange('0.00:10:00.0', '364.23:59:59.0')]    # 10 minutes --> 1 year
+        [ValidateScript({ (($_.TotalMinutes -gt 10) -and ($_.TotalDays -lt 364)) })]
         [timespan]$Duration,
 
         [ValidateSet('restart-scan','resume-scan')]
