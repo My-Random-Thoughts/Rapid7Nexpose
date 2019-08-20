@@ -51,13 +51,13 @@
         Run a scan every 1st of the month, every 3 months
 
     .NOTES
-        For additional information please contact PlatformBuild@callcreditgroup.com
+        For additional information please see my GitHub wiki page
 
     .FUNCTIONALITY
         POST: sites/{id}/scan_schedules
 
     .LINK
-        https://callcreditgroup.sharepoint.com/cto/dev%20ops/PlatformBuild/default.aspx
+        https://github.com/My-Random-Thoughts/Rapid7Nexpose
 #>
 
     [CmdletBinding(SupportsShouldProcess)]
