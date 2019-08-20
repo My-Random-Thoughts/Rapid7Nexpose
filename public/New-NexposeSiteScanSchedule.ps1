@@ -1,4 +1,4 @@
-Function New-NexposeSiteScanSchedule {
+﻿Function New-NexposeSiteScanSchedule {
 <#
     .SYNOPSIS
         Creates a new scan schedule for the specified site
@@ -15,11 +15,8 @@ Function New-NexposeSiteScanSchedule {
     .PARAMETER Name
         A user-defined name for the scan launched by the schedule
 
-    .PARAMETER StartDate
-        The scheduled start date.  Date is represented in yyyy-MM-dd format. Repeating schedules will determine the next schedule to begin based on this date
-
-    .PARAMETER StartTime
-        The scheduled start time.  Time is represented in hh:mm format. Repeating schedules will determine the next schedule to begin based on this time
+    .PARAMETER StartDateTime
+        The scheduled start date and time.  Repeating schedules will determine the next schedule to begin based on this date
 
     .PARAMETER IntervalText
         Settings for repeating a scheduled task.  Text starts with either 'Once' or 'Every'.
@@ -27,8 +24,7 @@ Function New-NexposeSiteScanSchedule {
 
     .PARAMETER Duration
         Specifies the maximum duration the scheduled scan is allowed to run. Scheduled scans that do not complete within specified duration will be paused.
-        The scan duration are represented by the format '[n]D[n]H[n]M'.  In these representations, the [n] is replaced by a value for each of the date and time elements that follow the [n]
-        Maximum values are: 364 Days, 23 Hours, 59 Minutes.  Examples inclue: '2d', '2h30m', '1w3d', ''
+        Maximum values are: 364 Days, 23 Hours, 59 Minutes.
 
     .PARAMETER ScanRepeat
         Specifies the desired behavior of a repeating scheduled scan when the previous scan was paused due to reaching is maximum duration. The following table describes each supported value
@@ -55,13 +51,13 @@ Function New-NexposeSiteScanSchedule {
         Run a scan every 1st of the month, every 3 months
 
     .NOTES
-        For additional information please see my GitHub wiki page
+        For additional information please contact PlatformBuild@callcreditgroup.com
 
     .FUNCTIONALITY
         POST: sites/{id}/scan_schedules
 
     .LINK
-        https://github.com/My-Random-Thoughts/Rapid7Nexpose
+        https://callcreditgroup.sharepoint.com/cto/dev%20ops/PlatformBuild/default.aspx
 #>
 
     [CmdletBinding(SupportsShouldProcess)]
@@ -75,16 +71,12 @@ Function New-NexposeSiteScanSchedule {
         [string]$Name,
 
         [Parameter(Mandatory = $true)]
-        [ValidateScript({[datetime]::ParseExact($_, 'yyyy-MM-dd', $null)})]
-        $StartDate,
-
-        [Parameter(Mandatory = $true)]
-        [ValidateScript({[datetime]::ParseExact($_, 'hh:mm', $null)})]
-        $StartTime,
+        [datetime]$StartDateTime,
 
         [string]$IntervalText,
 
-        [string]$Duration,
+        [ValidateRange('0.00:10:00.0', '364.23:59:59.0')]    # 10 minutes --> 1 year
+        [timespan]$Duration,
 
         [ValidateSet('restart-scan','resume-scan')]
         [string]$ScanRepeat,
@@ -119,14 +111,6 @@ Function New-NexposeSiteScanSchedule {
         If (($matchInterval.Success -eq $false) -or ($matchInterval.Value -ne $IntervalText)) {
             Throw 'Invalid interval entered, please see the examples for more information.'
         }
-
-        # Verify the duration input
-        [string]$regexDuration = '^((?:[1-9][0-9]?|[1-2][0-9][0-9]|3[0-5][0-9]|36[0-4])D)? ?((?:1?[0-9]?|2[0-3])H)? ?((?:[1-4]?[0-9]?|5[0-9])M)?$'
-        [System.Text.RegularExpressions.Match]$matchDuration = ([regex]::Match($Duration.ToLower(), $regexDuration, 'IgnoreCase'))
-
-        If (($matchDuration.Success -eq $false) -or ($matchDuration.Value -ne $Duration)) {
-            Throw 'Invalid duration entered, please see the examples for more information'
-        }
     }
 
     Process {
@@ -140,7 +124,7 @@ Function New-NexposeSiteScanSchedule {
             scanName       =  $Name
             onScanRepeat   =  $ScanRepeat
             scanTemplateId =  $ScanTemplate
-            start          = ('{0}T{1}:00Z' -f $StartDate, $StartTime)
+            start          = ('{0}T{1}:00Z' -f ($StartDateTime.ToString('yyyy-MM-dd')), ($StartDateTime.ToString('HH:mm')))
         }
 
         If ([string]::IsNullOrEmpty($ScanEngine) -eq $false) {
@@ -200,28 +184,8 @@ Function New-NexposeSiteScanSchedule {
         }
 
         If ([string]::IsNullOrEmpty($Duration) -eq $false) {
-            [int]$durationDays    = 0
-            [int]$durationHours   = 0
-            [int]$durationMinutes = 0
-
-            ForEach ($groupDuration In ($matchDuration.Groups | Where-Object { $_.Success -eq $true })) {
-                Switch ($groupDuration.Name) {
-                    '1' {    # Days (0 - 364)
-                        $durationDays += ($groupDuration.Value -replace ".{1}$")
-                    }
-
-                    '2' {    # Hours (0 - 23)
-                        $durationHours = ($groupDuration.Value -replace ".{1}$")
-                    }
-
-                    '3' {    # Minutes (0 - 59)
-                        $durationMinutes = ($groupDuration.Value -replace ".{1}$")
-                    }
-                }
-            }
-
             $apiQuery += @{
-                duration = ("P{0}DT{1}H{2}M" -f $durationDays, $durationHours, $durationMinutes )
+                duration = ("P{0}DT{1}H{2}M" -f $Duration.Days, $Duration.Hours, $Duration.Minutes)
             }
         }
 
