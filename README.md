@@ -31,7 +31,7 @@ This is an inital public offering, and as such, there is a lot of work that is s
 In addition to wanting to support pipeline processing correctly, I want to make it API complete as much as I can.
 
 ### Bugs / Issues
-I have several bugs open with Rapid7 for API issues, and I will be tracking those with the bug tracker here on GitHub
+I have several bugs open with Rapid7 for API issues.
 Some of them are minor ones that I may have coded around, others are much larger breaking issues.
 
 ### API Coverage
