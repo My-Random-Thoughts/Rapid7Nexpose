@@ -45,14 +45,17 @@ Function Update-NexposeSiteOrganization {
     .PARAMETER Zip
         The zip or region code
 
+    .PARAMETER ClearExistingEntries
+        Remove all values except for the ones specified
+
     .EXAMPLE
-        Update-NexposeSiteOrganization -Id 23 -OrganizationName 'ACME Inc.' -PrimaryContact 'Wile E. Coyot'
+        Update-NexposeSiteOrganization -Id 23 -OrganizationName 'ACME Inc.' -PrimaryContact 'Wile E. Coyote'
 
     .NOTES
         For additional information please see my GitHub wiki page
 
     .FUNCTIONALITY
-        PUT: APIBUG - sites/{id}/organization    # StateProvince is validated incorrectly
+        PUT: sites/{id}/organization
 
     .LINK
         https://github.com/My-Random-Thoughts/Rapid7Nexpose
@@ -82,20 +85,22 @@ Function Update-NexposeSiteOrganization {
 
         [string]$City,
 
-        [ValidateSet('','Albania','Algeria','Argentina','Australia','Austria','Bahrain','Belarus','Belgium','Bolivia','Bosnia and Herzegovina', `
-                        'Brazil','Bulgaria','Canada','Chile','China','Colombia','Costa Rica','Croatia','Cuba','Cyprus','Czech Republic','Denmark', `
-                        'Dominican Republic','Ecuador','Egypt','El Salvador','Estonia','Finland','France','Germany','Greece','Guatemala','Honduras', `
-                        'Hong Kong','Hungary','Iceland','India','Indonesia','Iraq','Ireland','Israel','Italy','Japan','Jordan','Kuwait','Latvia', `
-                        'Lebanon','Libya','Lithuania','Luxembourg','Macedonia','Malaysia','Malta','Mexico','Montenegro','Morocco','Netherlands', `
-                        'New Zealand','Nicaragua','Norway','Oman','Panama','Paraguay','Peru','Philippines','Poland','Portugal','Puerto Rico', `
-                        'Qatar','Romania','Russia','Saudi Arabia','Serbia','Serbia and Montenegro','Singapore','Slovakia','Slovenia','South Africa', `
-                        'South Korea','Spain','Sudan','Sweden','Switzerland','Syria','Taiwan','Thailand','Tunisia','Turkey','Ukraine','United Arab Emirates', `
-                        'United Kingdom','United States','Uruguay','Venezuela','Vietnam','Yemen')]
+        [ValidateSet('Albania','Algeria','Argentina','Australia','Austria','Bahrain','Belarus','Belgium','Bolivia','Bosnia and Herzegovina', `
+                     'Brazil','Bulgaria','Canada','Chile','China','Colombia','Costa Rica','Croatia','Cuba','Cyprus','Czech Republic','Denmark', `
+                     'Dominican Republic','Ecuador','Egypt','El Salvador','Estonia','Finland','France','Germany','Greece','Guatemala','Honduras', `
+                     'Hong Kong','Hungary','Iceland','India','Indonesia','Iraq','Ireland','Israel','Italy','Japan','Jordan','Kuwait','Latvia', `
+                     'Lebanon','Libya','Lithuania','Luxembourg','Macedonia','Malaysia','Malta','Mexico','Montenegro','Morocco','Netherlands', `
+                     'New Zealand','Nicaragua','Norway','Oman','Panama','Paraguay','Peru','Philippines','Poland','Portugal','Puerto Rico', `
+                     'Qatar','Romania','Russia','Saudi Arabia','Serbia','Serbia and Montenegro','Singapore','Slovakia','Slovenia','South Africa', `
+                     'South Korea','Spain','Sudan','Sweden','Switzerland','Syria','Taiwan','Thailand','Tunisia','Turkey','Ukraine','United Arab Emirates', `
+                     'United Kingdom','United States','Uruguay','Venezuela','Vietnam','Yemen')]
         [string]$Country,
 
         [string]$StateProvince,
 
-        [string]$Zip
+        [string]$Zip,
+
+        [switch]$ClearExistingEntries
     )
 
     Begin {
@@ -105,19 +110,20 @@ Function Update-NexposeSiteOrganization {
         }
 
         # Get current values
-        $site = (Get-NexposeSiteOrganization -Id $Id)
-
-        If ([string]::IsNullOrEmpty($BusinessAddress)  -eq $true) { $BusinessAddress  = $site.address  }
-        If ([string]::IsNullOrEmpty($City)             -eq $true) { $City             = $site.city     }
-        If ([string]::IsNullOrEmpty($PrimaryContact)   -eq $true) { $PrimaryContact   = $site.contact  }
-        If ([string]::IsNullOrEmpty($Country)          -eq $true) { $Country          = $site.country  }
-        If ([string]::IsNullOrEmpty($Email)            -eq $true) { $Email            = $site.email    }
-        If ([string]::IsNullOrEmpty($JobTitle)         -eq $true) { $JobTitle         = $site.jobTitle }
-        If ([string]::IsNullOrEmpty($OrganizationName) -eq $true) { $OrganizationName = $site.name     }
-        If ([string]::IsNullOrEmpty($Telephone)        -eq $true) { $Telephone        = $site.phone    }
-        If ([string]::IsNullOrEmpty($StateProvince)    -eq $true) { $StateProvince    = $site.state    }
-        If ([string]::IsNullOrEmpty($Url)              -eq $true) { $Url              = $site.url      }
-        If ([string]::IsNullOrEmpty($Zip)              -eq $true) { $Zip              = $site.zipCode  }
+        If (-not $ClearExistingEntries.IsPresent) {
+            $site = (Get-NexposeSiteOrganization -Id $Id)
+            If ([string]::IsNullOrEmpty($BusinessAddress)  -eq $true) { $BusinessAddress  = $site.address  }
+            If ([string]::IsNullOrEmpty($City)             -eq $true) { $City             = $site.city     }
+            If ([string]::IsNullOrEmpty($PrimaryContact)   -eq $true) { $PrimaryContact   = $site.contact  }
+            If ([string]::IsNullOrEmpty($Country)          -eq $true) { $Country          = $site.country  }
+            If ([string]::IsNullOrEmpty($Email)            -eq $true) { $Email            = $site.email    }
+            If ([string]::IsNullOrEmpty($JobTitle)         -eq $true) { $JobTitle         = $site.jobTitle }
+            If ([string]::IsNullOrEmpty($OrganizationName) -eq $true) { $OrganizationName = $site.name     }
+            If ([string]::IsNullOrEmpty($Telephone)        -eq $true) { $Telephone        = $site.phone    }
+            If ([string]::IsNullOrEmpty($StateProvince)    -eq $true) { $StateProvince    = $site.state    }
+            If ([string]::IsNullOrEmpty($Url)              -eq $true) { $Url              = $site.url      }
+            If ([string]::IsNullOrEmpty($Zip)              -eq $true) { $Zip              = $site.zipCode  }
+        }
     }
 
     Process {
@@ -126,10 +132,30 @@ Function Update-NexposeSiteOrganization {
                 [int]$id = (ConvertTo-NexposeId -Name $Name -ObjectType Site)
                 Write-Output (Update-NexposeSiteOrganization -Id $id -OrganizationName $OrganizationName -Url $Url -PrimaryContact $PrimaryContact `
                                                              -JobTitle $JobTitle -Email $Email -Telephone $Telephone -BusinessAddress $BusinessAddress `
-                                                             -City $City -Country $Country -StateProvince $StateProvince -Zip $Zip)
+                                                             -City $City -Country $Country -StateProvince $StateProvince -Zip $Zip -ClearExistingEntries:$ClearExistingEntries)
             }
 
             'byId' {
+                If ($ClearExistingEntries.IsPresent) {
+                    $apiQuery = @{
+                        address  = $null
+                        city     = $null
+                        contact  = $null
+                        country  = $null
+                        email    = $null
+                        jobTitle = $null
+                        name     = $null
+                        phone    = $null
+                        state    = $null
+                        url      = $null
+                        zipCode  = $null
+                    }
+
+                    If ($PSCmdlet.ShouldProcess($Id)) {
+                        Write-Output (Invoke-NexposeQuery -UrlFunction "sites/$Id/organization" -ApiQuery $apiQuery -RestMethod Put)
+                    }
+                }
+
                 $apiQuery = @{}
                 If ([string]::IsNullOrEmpty($BusinessAddress)  -eq $false) { $apiQuery += @{ address  = $BusinessAddress  }}
                 If ([string]::IsNullOrEmpty($City)             -eq $false) { $apiQuery += @{ city     = $City             }}

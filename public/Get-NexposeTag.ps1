@@ -38,7 +38,6 @@ Function Get-NexposeTag {
         GET: sites/{id}/tags
         GET: SKIPPED - tags/{id}/assets             # Due to data already present in return object
         GET: SKIPPED - tags/{id}/search_criteria    # Due to data already present in return object
-        PUT: APIBUG - tags/{id}/search_criteria
 
     .LINK
         https://github.com/My-Random-Thoughts/Rapid7Nexpose

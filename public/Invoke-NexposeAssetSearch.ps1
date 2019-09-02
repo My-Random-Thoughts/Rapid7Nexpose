@@ -1,19 +1,19 @@
 Function Invoke-NexposeAssetSearch {
 <#
     .SYNOPSIS
-        x
+        Starts a custom asset search
 
     .DESCRIPTION
-        x
+        Starts a custom asset search
 
     .PARAMETER SearchQuery
-        x
+        The custom query to use for searching the assets
 
     .EXAMPLE
-        Invoke-NexposeAssetSearch -SearchQuery ''
+        Invoke-NexposeAssetSearch -SearchQuery @{filters=@(@{field='criticality-tag'; operator='is-applied';}); match='all'}
 
     .EXAMPLE
-        Invoke-NexposeAssetSearch -SearchQuery ''
+        Invoke-NexposeAssetSearch -SearchQuery @{filters=@(@{field='last-scan-date'; operator='is-on-or-before'; value='2018-08-25'}); match='all'}
 
     .NOTES
         For additional information please see my GitHub wiki page

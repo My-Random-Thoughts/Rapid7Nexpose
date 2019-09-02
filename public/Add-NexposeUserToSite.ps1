@@ -44,7 +44,7 @@ Function Add-NexposeUserToSite {
     Process {
         If ($PSCmdlet.ShouldProcess($UserId)) {
             ForEach ($site In $SiteId) {
-                [int]$id = (ConvertTo-NexposeId -Name $site -ObjectType User)
+                [int]$id = (ConvertTo-NexposeId -Name $site -ObjectType Site)
                 Write-Output (Invoke-NexposeQuery -UrlFunction "users/$UserId/sites/$id" -RestMethod Put)
             }
         }

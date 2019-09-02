@@ -74,38 +74,46 @@ Function New-NexposeUser {
 
         [switch]$PasswordResetOnLogin,
 
-        [Parameter(Mandatory = $true)]
+        [ValidateSet('Global Administrator','Security Manager','Site Owner','Asset Owner','User')]
+        [string]$Role = 'user',
+
         [string[]]$SiteAccess,
 
-        [Parameter(Mandatory = $true)]
         [string[]]$AssetGroupAccess
     )
 
-    DynamicParam {
-        $dynParam = (New-Object -Type 'System.Management.Automation.RuntimeDefinedParameterDictionary')
-        New-DynamicParameter -Dictionary $dynParam -Name 'Role' -Type 'string' -ValidateSet @((Invoke-NexposeQuery -UrlFunction 'roles' -RestMethod Get).id)
-        Return $dynParam
-    }
-
     Begin {
-        [string]$Role = $($PSBoundParameters.Role)
-        If ([string]::IsNullOrEmpty($Role) -eq $true) { $Role = 'user' }
-
         # Convert securestring password into plaintext
         [string]$Password = (ConvertFrom-SecureString -SecureString $SecurePassword)
         [string]$Password = ((New-Object System.Net.NetworkCredential('Null', $(ConvertTo-SecureString -String $Password), 'Null')).Password)
+
+        # Convert Role to correct internal name
+        Switch ($Role) {
+            'Global Administrator' { $intRole = 'global-admin'     }
+            'Security Manager'     { $intRole = 'security-manager' }
+            'Site Owner'           { $intRole = 'site-admin'       }
+            'Asset Owner'          { $intRole = 'system-admin'     }
+            'User'                 { $intRole = 'user'             }
+        }
+
+        # Make sure correct authentication type is set
+        If (($AuthType -eq 'normal') -and ($intRole -eq 'global-admin')) { $AuthType = 'admin' }
+
+        If (($intRole -eq 'site-admin') -and ([string]::IsNullOrEmpty($SiteAccess))) {
+            Throw 'For site admins, you need to specifiy one or more sites'
+        }
+
+        If (($intRole -eq 'site-admin') -and (-not [string]::IsNullOrEmpty($AssetGroupAccess))) {
+            Throw 'For site admins, you must not specify any asset groups'
+        }
     }
 
     Process {
         [boolean]$allSites       = $false
         [boolean]$allAssetGroups = $false
 
-        # Make sure correct authentication type is set
-        If     (($AuthType -eq 'normal') -and ($Role -eq 'global-admin')) { $AuthType = 'admin'  }
-        ElseIf (($AuthType -eq 'admin')  -and ($Role -ne 'global-admin')) { $AuthType = 'normal' }
-
         # Ensure correct sites and assets privileges are set
-        $privileges = @((Get-NexposeRole -Id $Role).privileges)
+        $privileges = @((Get-NexposeRole -Id $intRole).privileges)
 
         If (($privileges -contains 'all-permissions') -or
             ($privileges -contains 'manage-dynamic-asset-groups')) {
@@ -124,7 +132,7 @@ Function New-NexposeUser {
             email   =  $Email.ToLower()
             enabled =  (-not $Disabled.IsPresent)
             role    = @{
-                id             = $Role.ToLower()
+                id             = $intRole.ToLower()
                 allSites       = $allSites
                 allAssetGroups = $allAssetGroups
             }
@@ -143,14 +151,14 @@ Function New-NexposeUser {
             If ($user.id -is [int]) {
 
                 If (($allSites -eq $false) -and ($SiteAccess.Count -gt 0)) {
-                    Add-NexposeUserToSite -UserId $($user.id) -SiteId $SiteAccess
+                    Add-NexposeUserToSite -UserId $($user.id) -SiteId $SiteAccess | Out-Null
                 }
 
                 If (($allAssetGroups -eq $false) -and ($AssetGroupAccess.Count -gt 0)) {
-                    Add-NexposeUserToAssetGroup -UserId ($user.id) -AssetGroupId $AssetGroupAccess
+                    Add-NexposeUserToAssetGroup -UserId ($user.id) -AssetGroupId $AssetGroupAccess | Out-Null
                 }
 
-                Write-Output (Get-NexposeUser -Id ($user.id))
+                Get-NexposeUser -Id $($user.id)
             }
         }
     }

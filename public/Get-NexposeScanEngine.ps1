@@ -70,8 +70,8 @@ Function Get-NexposeScanEngine {
         Default {
             $Engines = @(Invoke-NexposeQuery -UrlFunction 'scan_engines' -RestMethod Get)
             Switch ($PSCmdlet.ParameterSetName) {
-                'byName'    { Write-Output @($Engines | Where-Object { $_.name    -eq       $Name    }) }
-                'byAddress' { Write-Output @($Engines | Where-Object { $_.address -eq       $Address }) }
+                'byName'    { Write-Output @($Engines | Where-Object { $_.name    -eq $Name    }) }
+                'byAddress' { Write-Output @($Engines | Where-Object { $_.address -eq $Address }) }
             }
         }
     }

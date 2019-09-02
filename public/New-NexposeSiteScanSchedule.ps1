@@ -1,4 +1,4 @@
-﻿Function New-NexposeSiteScanSchedule {
+Function New-NexposeSiteScanSchedule {
 <#
     .SYNOPSIS
         Creates a new scan schedule for the specified site
