@@ -45,7 +45,7 @@ Function Get-NexposeScanEnginePool {
             If ($Id -gt 0) {
                 $Output = (Invoke-NexposeQuery -UrlFunction "scan_engine_pools/$Id" -RestMethod Get)
                 If ($IncludeSites.IsPresent) {
-                    $sites = (NexposeScanEnginePoolSites -Id $Id)
+                    $sites = (Get-NexposeScanEnginePoolSites -Id $Id)
                     $Output | Add-Member -Name 'sites' -Value $sites -MemberType NoteProperty
                 }
 
