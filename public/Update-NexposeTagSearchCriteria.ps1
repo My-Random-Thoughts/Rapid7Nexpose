@@ -28,7 +28,8 @@ Function Update-NexposeTagSearchCriteria {
         https://github.com/My-Random-Thoughts/Rapid7Nexpose
 #>
 
-    [CmdletBinding(DefaultParameterSetName = 'byId')]
+    [CmdletBinding(DefaultParameterSetName = 'byId', SupportsShouldProcess)]
+    [System.Diagnostics.CodeAnalysis.SuppressMessageAttribute('PSUseSingularNouns', '', Scope = 'Function')]
     Param (
         [Parameter(Mandatory = $true, ParameterSetName = 'byId')]
         [int]$Id,
