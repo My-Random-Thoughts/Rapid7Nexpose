@@ -1,4 +1,4 @@
-Function New-NexposeTag {
+﻿Function New-NexposeTag {
 <#
     .SYNOPSIS
         Creates a new tag
@@ -17,6 +17,7 @@ Function New-NexposeTag {
 
     .PARAMETER SearchCriteria
         Search criteria used to determine dynamic membership, if type is "dynamic"
+        Example of a SearchCriteria: @{ match = 'all'; filters = @(@{ field = 'ip-address'; operator = 'in-range'; lower = '1.1.1.1'; upper = '1.255.255.255' })}
 
     .EXAMPLE
         New-NexposeTag -Name 'NewTag_1' -Type 'Custom' -Colour 'Red'
@@ -25,13 +26,13 @@ Function New-NexposeTag {
         New-NexposeTag -Name 'DR_Site' -Type 'Location'
 
     .NOTES
-        For additional information please see my GitHub wiki page
+        For additional information please contact PlatformBuild@callcreditgroup.com
 
     .FUNCTIONALITY
         POST: tags
 
     .LINK
-        https://github.com/My-Random-Thoughts/Rapid7Nexpose
+        https://callcreditgroup.sharepoint.com/cto/dev%20ops/PlatformBuild/default.aspx
 #>
 
     [CmdletBinding(SupportsShouldProcess)]
@@ -65,6 +66,7 @@ Function New-NexposeTag {
         $apiQuery = @{
             type  = $Type.ToLower()
             color = $Colour.ToLower()
+            searchCriteria = $SearchCriteria
         }
 
         ForEach ($tag In $Name) {
