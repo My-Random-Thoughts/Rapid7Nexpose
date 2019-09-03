@@ -1,4 +1,4 @@
-﻿Function Update-NexposeTagSearchCriteria {
+Function Update-NexposeTagSearchCriteria {
 <#
     .SYNOPSIS
         Updates the search criteria associated with the tag
@@ -19,13 +19,13 @@
         Update-NexposeTagSearchCriteria -Name 'RangeTag' -SearchCriteria @{ match = 'all'; filters = @(@{ field = 'ip-address'; operator = 'in-range'; lower = '1.1.1.1'; upper = '1.255.255.255' })}
 
     .NOTES
-        For additional information please contact PlatformBuild@callcreditgroup.com
+        For additional information please see my GitHub wiki page
 
     .FUNCTIONALITY
         PUT: tags/{id}/search_criteria
 
     .LINK
-        https://callcreditgroup.sharepoint.com/cto/dev%20ops/PlatformBuild/default.aspx
+        https://github.com/My-Random-Thoughts/Rapid7Nexpose
 #>
 
     [CmdletBinding(DefaultParameterSetName = 'byId')]
