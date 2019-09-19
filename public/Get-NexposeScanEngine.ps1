@@ -18,6 +18,12 @@ Function Get-NexposeScanEngine {
     .PARAMETER SiteId
         The identifier of a site the scan engine is assigned to
 
+    .PARAMETER IncludeEnginePools
+        Switch to include any engine pools.  This is off by default
+
+    .PARAMETER RefreshedOffset
+        The number of hours to show if a scan engine is offline or not.  Default value is 6 hours
+
     .EXAMPLE
         Get-NexposeScanEngine -SiteId 5
 
@@ -50,28 +56,50 @@ Function Get-NexposeScanEngine {
         [string]$Address,
 
         [Parameter(Mandatory = $true, ParameterSetName = 'bySite')]
-        [string]$SiteId
+        [string]$SiteId,
+
+        [switch]$IncludeEnginePools,
+
+        [int]$RefreshedOffset = 6
     )
 
     Switch ($PSCmdlet.ParameterSetName) {
         'byId' {
             If ($Id -gt 0) {
-                Write-Output (Invoke-NexposeQuery -UrlFunction "scan_engines/$Id" -RestMethod Get)
+                $return = (Invoke-NexposeQuery -UrlFunction "scan_engines/$Id" -RestMethod Get)
             }
             Else {
-                Write-Output @(Invoke-NexposeQuery -UrlFunction 'scan_engines' -RestMethod Get)    # Return All
+                $return = @(Invoke-NexposeQuery -UrlFunction 'scan_engines' -RestMethod Get)    # Return All
             }
         }
 
         'bySite' {
-            Write-Output (Invoke-NexposeQuery -UrlFunction "sites/$SiteId/scan_engine" -RestMethod Get)
+            $return = (Invoke-NexposeQuery -UrlFunction "sites/$SiteId/scan_engine" -RestMethod Get)
         }
 
         Default {
-            $Engines = @(Invoke-NexposeQuery -UrlFunction 'scan_engines' -RestMethod Get)
+            $engines = @(Invoke-NexposeQuery -UrlFunction 'scan_engines' -RestMethod Get)
             Switch ($PSCmdlet.ParameterSetName) {
-                'byName'    { Write-Output @($Engines | Where-Object { $_.name    -eq $Name    }) }
-                'byAddress' { Write-Output @($Engines | Where-Object { $_.address -eq $Address }) }
+                'byName'    { $return =  @($engines | Where-Object { $_.name    -eq $Name    }) }
+                'byAddress' { $return =  @($engines | Where-Object { $_.address -eq $Address }) }
+            }
+        }
+    }
+
+    ForEach ($scan In $return) {
+        [string]$status = 'Unknown'
+        If (($scan.lastRefreshedDate -as [datetime]) -gt ((Get-Date).AddHours(-$RefreshedOffset))) {
+            $status = 'Online'
+        }
+        $scan | Add-Member -MemberType NoteProperty -Name 'status' -Value $status
+
+        If ($scan.port -ne '-1') {
+            Write-Output $scan
+        }
+        Else {
+            If ($IncludeEnginePools.IsPresent) {
+                $scan.status = 'N/A'
+                Write-Output $scan
             }
         }
     }
