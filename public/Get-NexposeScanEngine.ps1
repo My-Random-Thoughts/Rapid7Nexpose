@@ -102,5 +102,7 @@ Function Get-NexposeScanEngine {
                 Write-Output $scan
             }
         }
+        $scan | Add-Member -MemberType NoteProperty -Name 'Status' -Value $status
+        Write-Output $scan
     }
 }

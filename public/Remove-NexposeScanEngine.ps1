@@ -36,8 +36,8 @@ Function Remove-NexposeScanEngine {
         If ($pipeLine) { $Id = $pipeLine }
 
         ForEach ($item In $Id) {
-            If ($PSCmdlet.ShouldProcess()) {
-                Write-Output (Invoke-NexposeQuery -UrlFunction "scan_engines/$Id" -RestMethod Delete)
+            If ($PSCmdlet.ShouldProcess($item)) {
+                Write-Output (Invoke-NexposeQuery -UrlFunction "scan_engines/$item" -RestMethod Delete)
             }
         }
     }
