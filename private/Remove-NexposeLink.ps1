@@ -13,7 +13,7 @@ Function Remove-NexposeLink {
         Remove-NexposeLink -InputObject $Data
 
     .NOTES
-        For additional information please see my GitHub wiki page
+        For additonal information please contact PlatformBuild@callcreditgroup.com
 
     .LINK
         https://github.com/My-Random-Thoughts/Rapid7Nexpose
@@ -35,7 +35,7 @@ Function Remove-NexposeLink {
             # Remove top level links
             If ($PSCmdlet.ShouldProcess('InputObject')) {
                 If ($obj.links) { $obj = ($obj | Select-Object -Property * -ExcludeProperty 'links') }
-    
+
                 # Remove sub-level links
                 $obj | Get-Member -MemberType *Property | `
                     ForEach-Object -Process {
