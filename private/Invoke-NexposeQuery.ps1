@@ -104,7 +104,7 @@ Function Invoke-NexposeQuery {
 
             # Remove the "LINKS" section of the output, by default
             If ((Get-Variable -Name 'NexposeShowLinks' -ValueOnly -ErrorAction SilentlyContinue) -eq $true) { $IncludeLinks = $true }
-            If (-not $IncludeLinks.IsPresent) { $Output = (Remove-NexposeLink -InputObject $Output) }
+            If (-not $IncludeLinks.IsPresent) { $Output = (Remove-NexposeLink -InputObject $Output -WhatIf:$false) }
 
             # Check for single or multiple pages and resources
             [boolean]$script:resources = $false
