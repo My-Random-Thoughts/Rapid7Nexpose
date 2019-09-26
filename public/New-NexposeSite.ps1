@@ -78,7 +78,12 @@ Function New-NexposeSite {
 
     Begin {
         [string]$EngineName = $($PSBoundParameters.EngineId)
-        [int]   $EngineId   = ((Get-NexposeScanEngine -Name $EngineName).id)
+        If ($EngineName) {
+            [int]$EngineId = ((Get-NexposeScanEngine -Name $EngineName).id)
+        }
+        Else {
+            [int]$EngineId = ((Get-NexposeScanEngine -Name 'Local Scan Engine').id)
+        }
     }
 
     Process {
