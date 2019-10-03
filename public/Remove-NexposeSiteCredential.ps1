@@ -19,7 +19,7 @@ Function Remove-NexposeSiteCredential {
         For additional information please see my GitHub wiki page
 
     .FUNCTIONALITY
-        GET: shared_credentials
+        DELETE: sites/{id}/site_credentials
         DELETE: sites/{id}/site_credentials/{credentialId}
 
     .LINK
@@ -31,7 +31,6 @@ Function Remove-NexposeSiteCredential {
         [Parameter(Mandatory = $true)]
         [string]$SiteId,
 
-        [Parameter(Mandatory = $true)]
         [string]$Name
     )
 
@@ -39,24 +38,25 @@ Function Remove-NexposeSiteCredential {
     }
 
     Process {
-        [int]$id = 0
-        [object]$creds = (Invoke-NexposeQuery -UrlFunction 'shared_credentials' -RestMethod Get)
-
-        ForEach ($credential In $creds) {
-            If ($credential.Name -eq $Name) {
-                $id = ($credential.id)
-                Break
+        If ($Name.Trim().Length -gt 1) {
+            # Remove specific credential
+            [int]$id = ((Get-NexposeSiteCredential -Site $SiteId -Name $Name -ErrorAction Stop).id)
+            If ($id -gt 0) {
+                If ($PSCmdlet.ShouldProcess($Name)) {
+                    (Invoke-NexposeQuery -UrlFunction "sites/$SiteId/site_credentials/$id" -RestMethod Delete)
+                }
             }
-        }
-
-        If ($id -gt 0) {
-            If ($PSCmdlet.ShouldProcess($credential.Name)) {
-                (Invoke-NexposeQuery -UrlFunction "sites/$SiteId/site_credentials/$id" -RestMethod Delete)
+            Else {
+                Throw 'Specified account does not exist on this site'
             }
         }
         Else {
-            Throw 'Specified account does not exist'
+            # Remove all credentials
+            If ($PSCmdlet.ShouldProcess($SiteId, 'Removing all site specific credentials')) {
+                (Invoke-NexposeQuery -UrlFunction "sites/$SiteId/site_credentials" -RestMethod Delete)
+            }
         }
+
     }
 
     End {
