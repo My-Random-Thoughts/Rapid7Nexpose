@@ -1,16 +1,17 @@
 # API Coverage
 
-This list shows the current API coverage of the module as of 2019-04-10.
+This list shows the current API coverage of the module as of 2019-10-03.
 
 ---
 
-    GET PUT POST DELETE URL                                                                        COMMAND
+    Get Put Post Delete Url                                                                        Command
     --- --- ---- ------ ---                                                                        -------
             [X]         administration/commands                                                    Invoke-NexposeSystemCommand.ps1 (POST)
     [X]                 administration/info                                                        Get-NexposeSystemInfo.ps1 (GET)
     [X]     [X]         administration/license                                                     Get-NexposeLicense.ps1 (GET), Set-NexposeLicense.ps1 (POST)
     [X]                 administration/properties                                                  Get-NexposeSystemProperty.ps1 (GET)
     [X]                 administration/settings                                                    Get-NexposeSystemSetting.ps1 (GET), Get-NexposeUser2FAToken.ps1 (GET), New-NexposeUser2FAToken.ps1 (GET), Set-NexposeUser2FAToken.ps1 (GET)
+    [ ]                 agents
     [X]     [X]         asset_groups                                                               Get-NexposeAssetGroup.ps1 (GET), New-NexposeAssetGroup.ps1 (POST)
     [X] [X]      [X]    asset_groups/{id}                                                          Add-NexposeAssetToGroup.ps1 (GET), Get-NexposeAssetGroup.ps1 (GET), Remove-NexposeAssetFromGroup.ps1 (DELETE), Update-NexposeAssetGroup.ps1 (PUT)
     [X] [X]      [X]    asset_groups/{id}/assets                                                   Add-NexposeAssetToGroup.ps1 (PUT), Get-NexposeAsset.ps1 (GET), Remove-NexposeAssetFromGroup.ps1 (DELETE)
@@ -18,7 +19,7 @@ This list shows the current API coverage of the module as of 2019-04-10.
     [~] [~]             asset_groups/{id}/search_criteria                                          [SKIPPED] Get-NexposeAssetGroup.ps1 (GET), [SKIPPED] Update-NexposeAssetGroup.ps1 (PUT)
     [X] [~]      [X]    asset_groups/{id}/tags                                                     [SKIPPED] Add-NexposeTagToObject.ps1 (PUT), Get-NexposeTag.ps1 (GET), Remove-NexposeTagFromObject.ps1 (DELETE)
         [~]      [X]    asset_groups/{id}/tags/{tagId}                                             [SKIPPED] Add-NexposeTagToObject.ps1 (PUT), Remove-NexposeTagFromObject.ps1 (DELETE)
-    [X] [~]             asset_groups/{id}/users                                                    [SKIPPED] Add-NexposeUserToAssetGroup.ps1 (PUT), [SKIPPED] Get-NexposeUser.ps1 (GET), Get-NexposeAssetGroupUserList.ps1 (GET)
+    [~] [~]             asset_groups/{id}/users                                                    [SKIPPED] Add-NexposeUserToAssetGroup.ps1 (PUT), [SKIPPED] Get-NexposeUser.ps1 (GET), Get-NexposeAssetGroupUserList.ps1 (GET)
         [~]      [~]    asset_groups/{id}/users/{userId}                                           [SKIPPED] Add-NexposeUserToAssetGroup.ps1 (PUT), [SKIPPED] Remove-NexposeUserFromAssetGroup.ps1 (DELETE)
     [X]                 assets                                                                     Get-NexposeAsset.ps1 (GET)
     [X]                 assets/{assetId}/policies                                                  Get-NexposePolicy.ps1 (GET)
@@ -49,7 +50,7 @@ This list shows the current API coverage of the module as of 2019-04-10.
     [X]                 assets/{id}/vulnerabilities/{vulnerabilityId}/solution                     Get-NexposeAssetVulnerability.ps1 (GET)
     [X]     [ ]         assets/{id}/vulnerabilities/{vulnerabilityId}/validations                  Get-NexposeAssetVulnerability.ps1 (GET)
     [X]          [X]    assets/{id}/vulnerabilities/{vulnerabilityId}/validations/{validationId}   Get-NexposeAssetVulnerability.ps1 (GET), Remove-NexposeAssetVulnerabilityValidation.ps1 (DELETE)
-            [X]         assets/search                                                              Find-NexposeAssetSite.ps1 (POST), Get-NexposeAsset.ps1 (POST)
+            [@]         assets/search                                                              [APIBUG] Show-APIBUGS.ps1 (POST), Find-NexposeAssetSite.ps1 (POST), Get-NexposeAsset.ps1 (POST), Invoke-NexposeAssetSearch.ps1 (POST)
     [X]                 authentication_sources                                                     Get-NexposeAuthenticationSource.ps1 (GET)
     [X]                 authentication_sources/{id}                                                Get-NexposeAuthenticationSource.ps1 (GET)
     [X]                 authentication_sources/{id}/users                                          Get-NexposeUser.ps1 (GET)
@@ -95,8 +96,8 @@ This list shows the current API coverage of the module as of 2019-04-10.
     [X]                 report_formats                                                             Get-NexposeReportFormat.ps1 (GET)
     [X]                 report_templates                                                           Get-NexposeReportTemplate.ps1 (GET)
     [X]                 report_templates/{id}                                                      Get-NexposeReportTemplate.ps1 (GET)
-    [X]     [!]         reports                                                                    Get-NexposeReport.ps1 (GET), Get-NexposeReportHistory.ps1 (GET)
-    [X] [!]      [X]    reports/{id}                                                               Get-NexposeReport.ps1 (GET), Remove-NexposeReport.ps1 (DELETE)
+    [X]     [ ]         reports                                                                    Get-NexposeReport.ps1 (GET), Get-NexposeReportHistory.ps1 (GET)
+    [X] [ ]      [X]    reports/{id}                                                               Get-NexposeReport.ps1 (GET), Remove-NexposeReport.ps1 (DELETE)
             [X]         reports/{id}/generate                                                      Invoke-NexposeReport.ps1 (POST)
     [X]                 reports/{id}/history                                                       Get-NexposeReportHistory.ps1 (GET)
     [X]          [X]    reports/{id}/history/{instance}                                            Get-NexposeReportHistory.ps1 (GET), Remove-NexposeReportHistory.ps1 (DELETE)
@@ -104,24 +105,24 @@ This list shows the current API coverage of the module as of 2019-04-10.
     [X]                 roles                                                                      Get-NexposeRole.ps1 (GET), New-NexposeUser.ps1 (GET)
     [X] [X]      [X]    roles/{id}                                                                 Get-NexposeRole.ps1 (GET), Remove-NexposeRole.ps1 (DELETE), Update-NexposeRole.ps1 (PUT)
     [X]                 roles/{id}/users                                                           Get-NexposeUser.ps1 (GET)
-    [!]     [!]         scan_engine_pools
-    [!] [!]      [!]    scan_engine_pools/{id}
-    [!] [!]             scan_engine_pools/{id}/engines
-        [!]      [!]    scan_engine_pools/{id}/engines/{engineId}
-    [!]                 scan_engine_pools/{id}/sites
-    [X]     [X]         scan_engines                                                               Get-NexposeScanEngine.ps1 (GET), New-NexposeScanEngine.ps1 (POST)
+    [X]     [X]         scan_engine_pools                                                          Get-NexposeScanEnginePool.ps1 (GET), New-NexposeScanEnginePool.ps1 (POST)
+    [X] [ ]      [X]    scan_engine_pools/{id}                                                     Get-NexposeScanEnginePool.ps1 (GET), Remove-NexposeScanEnginePool.ps1 (DELETE)
+    [ ] [ ]             scan_engine_pools/{id}/engines
+        [X]      [X]    scan_engine_pools/{id}/engines/{engineId}                                  Add-NexposeScanEngineToPool.ps1 (DELETE), Add-NexposeScanEngineToPool.ps1 (PUT)
+    [X]                 scan_engine_pools/{id}/sites                                               Get-NexposeScanEnginePoolSite.ps1 (GET)
+    [X]     [ ]         scan_engines                                                               Get-NexposeScanEngine.ps1 (GET)
     [X] [X]      [X]    scan_engines/{id}                                                          Get-NexposeScanEngine.ps1 (GET), Remove-NexposeScanEngine.ps1 (DELETE), Update-NexposeScanEngine.ps1 (PUT)
     [~]                 scan_engines/{id}/scan_engine_pools                                        [SKIPPED] Get-NexposeScanEngine.ps1 (GET)
     [X]                 scan_engines/{id}/scans                                                    Get-NexposeScan.ps1 (GET)
     [~]                 scan_engines/{id}/sites                                                    [SKIPPED] Get-NexposeScanEngine.ps1 (GET)
-    [ ]     [ ]  [ ]    scan_engines/shared_secret
-    [ ]                 scan_engines/shared_secret/time_to_live
-    [X]     [@]         scan_templates                                                             [APIBUG] Show-APIBUGS.ps1 (POST), Get-NexposeScanTemplate.ps1 (GET)
+    [X]     [X]  [X]    scan_engines/shared_secret                                                 Get-NexposeScanEngineSharedSecret.ps1 (GET), New-NexposeScanEngineSharedSecret.ps1 (POST), Remove-NexposeScanEngineSharedSecret.ps1 (DELETE)
+    [X]                 scan_engines/shared_secret/time_to_live                                    Get-NexposeScanEngineSharedSecret.ps1 (GET)
+    [X]     [ ]         scan_templates                                                             Get-NexposeScanTemplate.ps1 (GET)
     [X] [@]      [X]    scan_templates/{id}                                                        [APIBUG] Show-APIBUGS.ps1 (PUT), Get-NexposeScanTemplate.ps1 (GET), Remove-NexposeScanTemplate.ps1 (DELETE)
     [X]                 scans                                                                      Get-NexposeScan.ps1 (GET)
     [X]                 scans/{id}                                                                 Get-NexposeScan.ps1 (GET)
             [X]         scans/{id}/{status}                                                        Update-NexposeScanStatus.ps1 (POST)
-    [X]     [X]  [~]    shared_credentials                                                         [SKIPPED] Remove-NexposeSharedCredential.ps1 (DELETE), Get-NexposeSharedCredential.ps1 (GET), New-NexposeCredential.ps1 (GET), New-NexposeCredential.ps1 (POST), Remove-NexposeSharedCredential.ps1 (GET), Remove-NexposeSiteCredential.ps1 (GET)
+    [X]     [X]  [~]    shared_credentials                                                         [SKIPPED] Remove-NexposeSharedCredential.ps1 (DELETE), Get-NexposeSharedCredential.ps1 (GET), New-NexposeCredential.ps1 (GET), New-NexposeCredential.ps1 (POST), Remove-NexposeSharedCredential.ps1 (GET)
     [X] [ ]      [X]    shared_credentials/{id}                                                    Get-NexposeSharedCredential.ps1 (GET), Remove-NexposeSharedCredential.ps1 (DELETE)
     [X]     [X]         sites                                                                      Get-NexposeSite.ps1 (GET), New-NexposeSite.ps1 (POST)
     [X] [X]      [X]    sites/{id}                                                                 Get-NexposeSite.ps1 (GET), Remove-NexposeSite.ps1 (DELETE), Update-NexposeSite.ps1 (PUT)
@@ -134,23 +135,23 @@ This list shows the current API coverage of the module as of 2019-04-10.
     [X] [X]      [X]    sites/{id}/alerts/syslog/{alertId}                                         Get-NexposeSiteAlert.ps1 (GET), Remove-NexposeSiteAlert.ps1 (DELETE), Update-NexposeSiteAlert.ps1 (PUT)
     [~]     [X]  [X]    sites/{id}/assets                                                          [SKIPPED] Get-NexposeAsset.ps1 (GET), New-NexposeAsset.ps1 (POST), Remove-NexposeAssetFromSite.ps1 (DELETE)
                  [X]    sites/{id}/assets/{assetId}                                                Remove-NexposeAssetFromSite.ps1 (DELETE)
-    [!] [!]             sites/{id}/discovery_connection
-    [!] [!]             sites/{id}/discovery_search_criteria
+    [ ] [ ]             sites/{id}/discovery_connection
+    [ ] [ ]             sites/{id}/discovery_search_criteria
     [X] [X]      [X]    sites/{id}/excluded_asset_groups                                           Get-NexposeSiteAssetConfiguration.ps1 (GET), Remove-NexposeSiteAssetConfiguration.ps1 (DELETE), Set-NexposeSiteAssetConfiguration.ps1 (PUT)
                  [X]    sites/{id}/excluded_asset_groups/{assetGroupId}                            Remove-NexposeSiteAssetConfiguration.ps1 (DELETE)
     [X] [X]             sites/{id}/excluded_targets                                                Find-NexposeIpTargetSite.ps1 (GET), Get-NexposeSiteAssetConfiguration.ps1 (GET), Set-NexposeSiteAssetConfiguration.ps1 (PUT)
     [X] [X]      [X]    sites/{id}/included_asset_groups                                           Get-NexposeSiteAssetConfiguration.ps1 (GET), Remove-NexposeSiteAssetConfiguration.ps1 (DELETE), Set-NexposeSiteAssetConfiguration.ps1 (PUT)
                  [X]    sites/{id}/included_asset_groups/{assetGroupId}                            Remove-NexposeSiteAssetConfiguration.ps1 (DELETE)
     [X] [X]             sites/{id}/included_targets                                                Find-NexposeIpTargetSite.ps1 (GET), Get-NexposeSiteAssetConfiguration.ps1 (GET), Set-NexposeSiteAssetConfiguration.ps1 (PUT)
-    [X] [@]             sites/{id}/organization                                                    [APIBUG] Show-APIBUGS.ps1 (PUT), [APIBUG] Update-NexposeSiteOrganization.ps1 (PUT), Get-NexposeSiteOrganization.ps1 (GET)
+    [X] [X]             sites/{id}/organization                                                    Get-NexposeSiteOrganization.ps1 (GET), Update-NexposeSiteOrganization.ps1 (PUT)
     [X] [X]             sites/{id}/scan_engine                                                     Get-NexposeScanEngine.ps1 (GET), Update-NexposeScanEngine.ps1 (PUT)
-    [X] [~] [X]  [~]    sites/{id}/scan_schedules                                                  [SKIPPED] Get-NexposeSiteScanSchedule.ps1 (DELETE), [SKIPPED] Get-NexposeSiteScanSchedule.ps1 (PUT), Get-NexposeSiteScanSchedule.ps1 (GET), New-NexposeSiteScanSchedule.ps1 (POST)
-    [X] [@]      [X]    sites/{id}/scan_schedules/{scheduleId}                                     [APIBUG] Show-APIBUGS.ps1 (PUT), Get-NexposeSiteScanSchedule.ps1 (GET), Remove-NexposeSiteScanSchedule.ps1 (DELETE), Update-NexposeSiteScanSchedule.ps1 (PUT)
+    [X] [~] [@]  [~]    sites/{id}/scan_schedules                                                  [APIBUG] Show-APIBUGS.ps1 (POST), [SKIPPED] Get-NexposeSiteScanSchedule.ps1 (DELETE), [SKIPPED] Get-NexposeSiteScanSchedule.ps1 (PUT), Get-NexposeSiteScanSchedule.ps1 (GET), New-NexposeSiteScanSchedule.ps1 (POST)
+    [X] [X]      [X]    sites/{id}/scan_schedules/{scheduleId}                                     Get-NexposeSiteScanSchedule.ps1 (GET), Remove-NexposeSiteScanSchedule.ps1 (DELETE), Update-NexposeSiteScanSchedule.ps1 (PUT)
     [X] [X]             sites/{id}/scan_template                                                   Get-NexposeSiteScanTemplate.ps1 (GET), Set-NexposeSiteScanTemplate.ps1 (PUT)
     [X]     [X]         sites/{id}/scans                                                           Get-NexposeScan.ps1 (GET), Start-NexposeSiteScan.ps1 (POST)
     [~]                 sites/{id}/shared_credentials                                              [SKIPPED] Get-NexposeSharedCredential.ps1 (GET)
         [X]             sites/{id}/shared_credentials/{credentialId}/enabled                       Set-NexposeSiteCredentialEnablement.ps1 (PUT)
-    [X] [ ] [X]  [ ]    sites/{id}/site_credentials                                                Get-NexposeSiteCredential.ps1 (GET), New-NexposeCredential.ps1 (GET), New-NexposeCredential.ps1 (POST)
+    [X] [ ] [X]  [X]    sites/{id}/site_credentials                                                Get-NexposeSiteCredential.ps1 (GET), New-NexposeCredential.ps1 (GET), New-NexposeCredential.ps1 (POST), Remove-NexposeSiteCredential.ps1 (DELETE)
     [X] [ ]      [X]    sites/{id}/site_credentials/{credentialId}                                 Get-NexposeSiteCredential.ps1 (GET), Remove-NexposeSiteCredential.ps1 (DELETE)
         [X]             sites/{id}/site_credentials/{credentialId}/enabled                         Set-NexposeSiteCredentialEnablement.ps1 (PUT)
     [X] [~]             sites/{id}/tags                                                            [SKIPPED] Add-NexposeTagToObject.ps1 (PUT), Get-NexposeTag.ps1 (GET)
@@ -166,17 +167,17 @@ This list shows the current API coverage of the module as of 2019-04-10.
     [X]                 solutions/{id}/prerequisites                                               Get-NexposeSolution.ps1 (GET)
     [X]                 solutions/{id}/supersedes                                                  Get-NexposeSolution.ps1 (GET)
     [X]                 solutions/{id}/superseding                                                 Get-NexposeSolution.ps1 (GET)
-    [X]     [!]         sonar_queries                                                              Get-NexposeSonarQuery.ps1 (GET)
-    [X] [!]      [X]    sonar_queries/{id}                                                         Get-NexposeSonarQuery.ps1 (GET), Remove-NexposeSonarQuery.ps1 (DELETE)
+    [X]     [ ]         sonar_queries                                                              Get-NexposeSonarQuery.ps1 (GET)
+    [X] [ ]      [X]    sonar_queries/{id}                                                         Get-NexposeSonarQuery.ps1 (GET), Remove-NexposeSonarQuery.ps1 (DELETE)
     [X]                 sonar_queries/{id}/assets                                                  Get-NexposeSonarQuery.ps1 (GET)
-            [!]         sonar_queries/search
+            [ ]         sonar_queries/search
     [X]     [X]         tags                                                                       Get-NexposeTag.ps1 (GET), New-NexposeTag.ps1 (POST)
     [X] [X]      [X]    tags/{id}                                                                  Get-NexposeTag.ps1 (GET), Remove-NexposeTag.ps1 (DELETE), Update-NexposeTag.ps1 (PUT)
     [X] [~]      [~]    tags/{id}/asset_groups                                                     [SKIPPED] Add-NexposeTagToObject.ps1 (PUT), [SKIPPED] Remove-NexposeTagFromObject.ps1 (DELETE), Get-NexposeAssetGroup.ps1 (GET)
         [X]      [~]    tags/{id}/asset_groups/{assetGroupId}                                      [SKIPPED] Remove-NexposeTagFromObject.ps1 (DELETE), Add-NexposeTagToObject.ps1 (PUT)
     [~]                 tags/{id}/assets                                                           [SKIPPED] Get-NexposeTag.ps1 (GET)
         [X]      [~]    tags/{id}/assets/{assetId}                                                 [SKIPPED] Remove-NexposeTagFromObject.ps1 (DELETE), Add-NexposeTagToObject.ps1 (PUT)
-    [~] [@]      [X]    tags/{id}/search_criteria                                                  [APIBUG] Get-NexposeTag.ps1 (PUT), [APIBUG] Show-APIBUGS.ps1 (PUT), [SKIPPED] Get-NexposeTag.ps1 (GET), Remove-NexposeTagSearchCriteria.ps1 (DELETE)
+    [~] [X]      [X]    tags/{id}/search_criteria                                                  [SKIPPED] Get-NexposeTag.ps1 (GET), Remove-NexposeTagSearchCriteria.ps1 (DELETE), Update-NexposeTagSearchCriteria.ps1 (PUT)
     [X] [~]      [~]    tags/{id}/sites                                                            [SKIPPED] Add-NexposeTagToObject.ps1 (PUT), [SKIPPED] Remove-NexposeTagFromObject.ps1 (DELETE), Get-NexposeSite.ps1 (GET)
         [X]      [~]    tags/{id}/sites/{siteId}                                                   [SKIPPED] Remove-NexposeTagFromObject.ps1 (DELETE), Add-NexposeTagToObject.ps1 (PUT)
     [X]     [X]         users                                                                      Get-NexposeUser.ps1 (GET), New-NexposeUser.ps1 (POST)
@@ -189,14 +190,14 @@ This list shows the current API coverage of the module as of 2019-04-10.
     [~]                 users/{id}/privileges                                                      [SKIPPED] Get-NexposeUser.ps1 (GET)
     [X] [~]      [~]    users/{id}/sites                                                           [SKIPPED] Add-NexposeUserToSite.ps1 (PUT), [SKIPPED] Remove-NexposeUserFromSite.ps1 (DELETE), Get-NexposeUser.ps1 (GET)
         [X]      [X]    users/{id}/sites/{siteId}                                                  Add-NexposeUserToSite.ps1 (PUT), Remove-NexposeUserFromSite.ps1 (DELETE)
-    [!]                 vulnerabilities
-    [!]                 vulnerabilities/{id}
-    [!]                 vulnerabilities/{id}/assets
-    [!]                 vulnerabilities/{id}/checks
-    [!]                 vulnerabilities/{id}/exploits
-    [!]                 vulnerabilities/{id}/malware_kits
-    [!]                 vulnerabilities/{id}/references
-    [!]                 vulnerabilities/{id}/solutions
+    [ ]                 vulnerabilities
+    [ ]                 vulnerabilities/{id}
+    [ ]                 vulnerabilities/{id}/assets
+    [ ]                 vulnerabilities/{id}/checks
+    [ ]                 vulnerabilities/{id}/exploits
+    [ ]                 vulnerabilities/{id}/malware_kits
+    [ ]                 vulnerabilities/{id}/references
+    [ ]                 vulnerabilities/{id}/solutions
     [X]                 vulnerability_categories                                                   Get-NexposeVulnerabilityCategory.ps1 (GET)
     [X]                 vulnerability_categories/{id}                                              Get-NexposeVulnerabilityCategory.ps1 (GET)
     [X]                 vulnerability_categories/{id}/vulnerabilities                              Get-NexposeVulnerabilityCategory.ps1 (GET)
@@ -210,14 +211,17 @@ This list shows the current API coverage of the module as of 2019-04-10.
     [X]                 vulnerability_references                                                   Get-NexposeVulnerabilityReference.ps1 (GET)
     [X]                 vulnerability_references/{id}                                              Get-NexposeVulnerabilityReference.ps1 (GET)
     [X]                 vulnerability_references/{id}/vulnerabilities                              Get-NexposeVulnerabilityReference.ps1 (GET)
+    --- --- ---- ------ ---                                                                        -------
+    93% 81% 72%  100%   Percentage Complete
 
----
 
-    [X]  312  Done
-    [ ]   11  Todo
-    [!]   27  ReqWork
-    [~]   58  Skipped
-    [@]    7  Bugs
+     [X]  261  Done
+     [ ]   29  Todo
+     [!]    0  ReqWork
+     [~]   58  Skipped
+     [@]    3  Bugs
+     ---  ---  -------
+          351  Total
 
 `ReqWork` are endpoints that require extra work or need to be re-written
 
