@@ -190,14 +190,14 @@ This list shows the current API coverage of the module as of 2019-10-03.
     [~]                 users/{id}/privileges                                                      [SKIPPED] Get-NexposeUser.ps1 (GET)
     [X] [~]      [~]    users/{id}/sites                                                           [SKIPPED] Add-NexposeUserToSite.ps1 (PUT), [SKIPPED] Remove-NexposeUserFromSite.ps1 (DELETE), Get-NexposeUser.ps1 (GET)
         [X]      [X]    users/{id}/sites/{siteId}                                                  Add-NexposeUserToSite.ps1 (PUT), Remove-NexposeUserFromSite.ps1 (DELETE)
-    [ ]                 vulnerabilities
-    [ ]                 vulnerabilities/{id}
-    [ ]                 vulnerabilities/{id}/assets
-    [ ]                 vulnerabilities/{id}/checks
-    [ ]                 vulnerabilities/{id}/exploits
-    [ ]                 vulnerabilities/{id}/malware_kits
-    [ ]                 vulnerabilities/{id}/references
-    [ ]                 vulnerabilities/{id}/solutions
+    [X]                 vulnerabilities                                                            Get-NexposeVulnerabilityItem.ps1 (GET)
+    [X]                 vulnerabilities/{id}                                                       Get-NexposeVulnerabilityItem.ps1 (GET)
+    [X]                 vulnerabilities/{id}/assets                                                Get-NexposeVulnerabilityItemAsset.ps1 (GET)
+    [X]                 vulnerabilities/{id}/checks                                                Get-NexposeVulnerabilityItemCheck.ps1 (GET)
+    [X]                 vulnerabilities/{id}/exploits                                              Get-NexposeVulnerabilityItemExploit.ps1 (GET)
+    [X]                 vulnerabilities/{id}/malware_kits                                          Get-NexposeVulnerabilityItemMalwareKit.ps1 (GET)
+    [X]                 vulnerabilities/{id}/references                                            Get-NexposeVulnerabilityItemReference.ps1 (GET)
+    [X]                 vulnerabilities/{id}/solutions                                             Get-NexposeVulnerabilityItemSolution.ps1 (GET)
     [X]                 vulnerability_categories                                                   Get-NexposeVulnerabilityCategory.ps1 (GET)
     [X]                 vulnerability_categories/{id}                                              Get-NexposeVulnerabilityCategory.ps1 (GET)
     [X]                 vulnerability_categories/{id}/vulnerabilities                              Get-NexposeVulnerabilityCategory.ps1 (GET)
@@ -212,16 +212,19 @@ This list shows the current API coverage of the module as of 2019-10-03.
     [X]                 vulnerability_references/{id}                                              Get-NexposeVulnerabilityReference.ps1 (GET)
     [X]                 vulnerability_references/{id}/vulnerabilities                              Get-NexposeVulnerabilityReference.ps1 (GET)
     --- --- ---- ------ ---                                                                        -------
-    93% 81% 72%  100%   Percentage Complete
+    98% 81% 72%  100%   Percentage Complete
 
 
-     [X]  261  Done
-     [ ]   29  Todo
+     [X]  269  Done
+     [ ]   21  Todo
      [!]    0  ReqWork
      [~]   58  Skipped
      [@]    3  Bugs
      ---  ---  -------
           351  Total
+
+
+
 
 `ReqWork` are endpoints that require extra work or need to be re-written
 
