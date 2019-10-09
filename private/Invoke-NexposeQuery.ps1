@@ -92,7 +92,6 @@ Function Invoke-NexposeQuery {
             }
         }
 
-
         Try {
             Write-Verbose "Executing API method `"$($RestMethod.ToString().ToUpper())`" against `"$($iRestM.Uri)`""
             If ($ApiQuery) { Write-Verbose "ApiQuery:`n$($ApiQuery | ConvertTo-Json -Depth 100)" }
@@ -122,20 +121,22 @@ Function Invoke-NexposeQuery {
             }
 
             # Output for any additional pages
-            [int]$totalPages = ($Output.page.totalPages)
+            [int]$totalPages = ($Output.page.totalPages - 1)
             If (($script:page -eq $true) -and ($totalPages -gt 1)) {
                 [int]$totalLength = $($totalPages).ToString().Trim().Length
 
                 2..$totalPages | ForEach-Object -Process {
                     Write-Verbose "Retreving page $($_.ToString().PadLeft($totalLength)) of $totalPages ..."
+                    If ($_ -eq 2) {
+                        $iRestM.Uri += '&page=2'
+                    }
+                    Else {
+                        $iRestM.Uri = $iRestM.Uri.Replace("&page=$($_ - 1)", "&page=$_")
+                    }
 
-                    [int]$currPage = ([regex]::Match($iRestM.Uri, '(?:&page=)([0-9]{1,})(?:&)').Groups[1].Value)
-                    $iRestM.Uri = $iRestM.Uri.Replace("&page=$($currPage)", "&page=$($_ - 1)")
-
-                    $Output = (Invoke-RestMethod @iRestM -Verbose:$false -TimeoutSec 300 -ErrorAction Stop).resources
+                    $Output = ((Invoke-RestMethod @iRestM -Verbose:$false -TimeoutSec 300 -ErrorAction Stop).resources)
                     If (-not $IncludeLinks.IsPresent) { $Output = (Remove-NexposeLink -InputObject $Output) }
-
-                    Write-Output $Output.resources
+                    Write-Output $Output
                 }
             }
         }
