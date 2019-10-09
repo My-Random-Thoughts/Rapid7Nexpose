@@ -136,7 +136,9 @@ Function Get-NexposeUser {
             }
 
             'bySite' {
-                $Site = (ConvertTo-NexposeId -Name $Name -ObjectType 'Site')
+                If (-not ($Site -as [int]) -eq $site) {
+                    $Site = (ConvertTo-NexposeId -Name $Name -ObjectType 'Site')
+                }
                 If ([string]::IsNullOrEmpty($Site) -eq $false) {
                     Write-Output (Invoke-NexposeQuery -UrlFunction "sites/$Site/users" -RestMethod Get)
                 }
