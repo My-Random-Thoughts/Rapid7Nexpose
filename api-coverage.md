@@ -107,10 +107,10 @@ This list shows the current API coverage of the module as of 2019-10-03.
     [X]                 roles/{id}/users                                                           Get-NexposeUser.ps1 (GET)
     [X]     [X]         scan_engine_pools                                                          Get-NexposeScanEnginePool.ps1 (GET), New-NexposeScanEnginePool.ps1 (POST)
     [X] [ ]      [X]    scan_engine_pools/{id}                                                     Get-NexposeScanEnginePool.ps1 (GET), Remove-NexposeScanEnginePool.ps1 (DELETE)
-    [ ] [ ]             scan_engine_pools/{id}/engines
+    [X] [ ]             scan_engine_pools/{id}/engines                                             Get-NexposeScanEnginePoolEngine.ps1 (GET)
         [X]      [X]    scan_engine_pools/{id}/engines/{engineId}                                  Add-NexposeScanEngineToPool.ps1 (DELETE), Add-NexposeScanEngineToPool.ps1 (PUT)
     [X]                 scan_engine_pools/{id}/sites                                               Get-NexposeScanEnginePoolSite.ps1 (GET)
-    [X]     [ ]         scan_engines                                                               Get-NexposeScanEngine.ps1 (GET)
+    [X]     [X]         scan_engines                                                               Get-NexposeScanEngine.ps1 (GET), New-NexposeScanEngine.ps1 (POST)
     [X] [X]      [X]    scan_engines/{id}                                                          Get-NexposeScanEngine.ps1 (GET), Remove-NexposeScanEngine.ps1 (DELETE), Update-NexposeScanEngine.ps1 (PUT)
     [~]                 scan_engines/{id}/scan_engine_pools                                        [SKIPPED] Get-NexposeScanEngine.ps1 (GET)
     [X]                 scan_engines/{id}/scans                                                    Get-NexposeScan.ps1 (GET)
@@ -135,8 +135,8 @@ This list shows the current API coverage of the module as of 2019-10-03.
     [X] [X]      [X]    sites/{id}/alerts/syslog/{alertId}                                         Get-NexposeSiteAlert.ps1 (GET), Remove-NexposeSiteAlert.ps1 (DELETE), Update-NexposeSiteAlert.ps1 (PUT)
     [~]     [X]  [X]    sites/{id}/assets                                                          [SKIPPED] Get-NexposeAsset.ps1 (GET), New-NexposeAsset.ps1 (POST), Remove-NexposeAssetFromSite.ps1 (DELETE)
                  [X]    sites/{id}/assets/{assetId}                                                Remove-NexposeAssetFromSite.ps1 (DELETE)
-    [ ] [ ]             sites/{id}/discovery_connection
-    [ ] [ ]             sites/{id}/discovery_search_criteria
+    [X] [ ]             sites/{id}/discovery_connection                                            Get-NexposeSiteDiscoveryConnection.ps1 (GET)
+    [X] [ ]             sites/{id}/discovery_search_criteria                                       Get-NexposeSiteDiscoverySearchCriteria.ps1 (GET)
     [X] [X]      [X]    sites/{id}/excluded_asset_groups                                           Get-NexposeSiteAssetConfiguration.ps1 (GET), Remove-NexposeSiteAssetConfiguration.ps1 (DELETE), Set-NexposeSiteAssetConfiguration.ps1 (PUT)
                  [X]    sites/{id}/excluded_asset_groups/{assetGroupId}                            Remove-NexposeSiteAssetConfiguration.ps1 (DELETE)
     [X] [X]             sites/{id}/excluded_targets                                                Find-NexposeIpTargetSite.ps1 (GET), Get-NexposeSiteAssetConfiguration.ps1 (GET), Set-NexposeSiteAssetConfiguration.ps1 (PUT)
@@ -212,18 +212,16 @@ This list shows the current API coverage of the module as of 2019-10-03.
     [X]                 vulnerability_references/{id}                                              Get-NexposeVulnerabilityReference.ps1 (GET)
     [X]                 vulnerability_references/{id}/vulnerabilities                              Get-NexposeVulnerabilityReference.ps1 (GET)
     --- --- ---- ------ ---                                                                        -------
-    98% 81% 72%  100%   Percentage Complete
+    99% 81% 75%  100%   Percentage Complete
 
 
-     [X]  269  Done
-     [ ]   21  Todo
+     [X]  273  Done
+     [ ]   17  Todo
      [!]    0  ReqWork
      [~]   58  Skipped
      [@]    3  Bugs
      ---  ---  -------
           351  Total
-
-
 
 
 `ReqWork` are endpoints that require extra work or need to be re-written
