@@ -18,6 +18,9 @@ Function Invoke-NexposeQuery {
     .PARAMETER IncludeLinks
         By default all hyperlinks are removed from the resutls
 
+    .PARAMETER Count
+        Return only the count of the results found
+
     .EXAMPLE
         Invoke-NexposeQuery -UrlFunction 'sites/5/assets' -RestMethod Get
 
@@ -41,7 +44,9 @@ Function Invoke-NexposeQuery {
         [Parameter(Mandatory = $true)]
         [Microsoft.PowerShell.Commands.WebRequestMethod]$RestMethod,
 
-        [switch]$IncludeLinks
+        [switch]$IncludeLinks,
+
+        [switch]$Count
     )
 
     Begin {
@@ -111,6 +116,19 @@ Function Invoke-NexposeQuery {
             $Output | Get-Member -MemberType *Property | ForEach-Object -Process {
                 If (($_.Name) -eq 'resources') { $script:resources = $true }
                 If (($_.Name) -eq 'page'     ) { $script:page      = $true }
+            }
+
+            If ($Count.IsPresent) {
+                If ($script:page) {
+                    Write-Output $($Output.page.totalResources -as [int])
+                }
+                ElseIf ($script:resources) {
+                    Write-Output $($Output.resources.Count -as [int])
+                }
+                Else {
+                    Write-Output $($Output.Count -as [int])
+                }
+                Return
             }
 
             If ($script:resources) {
