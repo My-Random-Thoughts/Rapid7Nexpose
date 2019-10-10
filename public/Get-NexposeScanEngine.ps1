@@ -22,7 +22,7 @@ Function Get-NexposeScanEngine {
         Switch to include any engine pools.  This is off by default
 
     .PARAMETER RefreshedOffset
-        The number of hours to show if a scan engine is offline or not.  Default value is 6 hours
+        The number of hours to show if a scan engine is offline or not.  Default value is 2 hours
 
     .EXAMPLE
         Get-NexposeScanEngine -SiteId 5
@@ -60,49 +60,53 @@ Function Get-NexposeScanEngine {
 
         [switch]$IncludeEnginePools,
 
-        [int]$RefreshedOffset = 6
+        [int]$RefreshedOffset = 2
     )
 
     Switch ($PSCmdlet.ParameterSetName) {
         'byId' {
             If ($Id -gt 0) {
-                $return = (Invoke-NexposeQuery -UrlFunction "scan_engines/$Id" -RestMethod Get)
+                $engines = (Invoke-NexposeQuery -UrlFunction "scan_engines/$Id" -RestMethod Get)
             }
             Else {
-                $return = @(Invoke-NexposeQuery -UrlFunction 'scan_engines' -RestMethod Get)    # Return All
+                $engines = @(Invoke-NexposeQuery -UrlFunction 'scan_engines' -RestMethod Get)    # Return All
             }
         }
 
         'bySite' {
-            $return = (Invoke-NexposeQuery -UrlFunction "sites/$SiteId/scan_engine" -RestMethod Get)
+            $engines = (Invoke-NexposeQuery -UrlFunction "sites/$SiteId/scan_engine" -RestMethod Get)
         }
 
         Default {
-            $engines = @(Invoke-NexposeQuery -UrlFunction 'scan_engines' -RestMethod Get)
+            $engineList = @(Invoke-NexposeQuery -UrlFunction 'scan_engines' -RestMethod Get)
             Switch ($PSCmdlet.ParameterSetName) {
-                'byName'    { $return =  @($engines | Where-Object { $_.name    -eq $Name    }) }
-                'byAddress' { $return =  @($engines | Where-Object { $_.address -eq $Address }) }
+                'byName'    { $engines =  @($engineList | Where-Object { $_.name    -eq $Name    }) }
+                'byAddress' { $engines =  @($engineList | Where-Object { $_.address -eq $Address }) }
             }
         }
     }
 
-    ForEach ($scan In $return) {
-        [string]$status = 'Unknown'
-        If (($scan.lastRefreshedDate -as [datetime]) -gt ((Get-Date).AddHours(-$RefreshedOffset))) {
-            $status = 'Online'
-        }
-        $scan | Add-Member -MemberType NoteProperty -Name 'status' -Value $status
+    # Get detailed information for "Status"
+    [pscustomobject[]]$cmdObject = (Get-NexposeScanEngineAlternative)
 
-        If ($scan.port -ne '-1') {
-            Write-Output $scan
-        }
-        Else {
-            If ($IncludeEnginePools.IsPresent) {
-                $scan.status = 'N/A'
-                Write-Output $scan
+    ForEach ($scan In ($engines | Sort-Object -Property id)) {
+        # One of: Active, Pending-Auth, Incompatible, Not-Responding, Unknown
+        [string]$status = ($cmdObject | Where-Object { $_.name -eq $scan.name }).status
+
+        # Check last refreshed date, should be updated evey hour
+        If ($scan.lastRefreshedDate) {
+            [int]$Offset = ((Get-Date) - ($scan.lastRefreshedDate -as [datetime]))
+            If (($Offset -gt $RefreshedOffset) -and ($status -eq 'Active')) {
+                $status = 'Stale'
             }
         }
-        $scan | Add-Member -MemberType NoteProperty -Name 'Status' -Value $status
-        Write-Output $scan
+
+        If ($scan.port -eq '-1') { $status = 'Pool'      }
+        If ($status    -eq   '') { $status = 'Undefined' }
+
+        If ((($scan.port -eq '-1') -and ($IncludeEnginePools.IsPresent)) -or ($scan.port -ne '-1')) {
+            $scan | Add-Member -MemberType NoteProperty -Name 'status' -Value $status
+            Write-Output $scan
+        }
     }
 }

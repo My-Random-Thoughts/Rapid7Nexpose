@@ -44,14 +44,14 @@ Function Repair-NexposeScanEngine {
             }
         }
         Else {
-            $ScanEngines = @(Get-NexposeScanEngine -RefreshedOffset 2 | Where-Object { ($_.id -gt 3) })
+            $ScanEngines = @(Get-NexposeScanEngine | Where-Object { ($_.id -gt 3) })
         }
-        Write-Verbose -Message ($ScanEngines | Format-Table -AutoSize | Out-String)
     }
 
     Process {
         ForEach ($engine In $ScanEngines) {
-            If (($engine.status -eq 'online') -and (-not $IgnoreOnlineStatus.IsPresent)) { Continue }
+            If (($engine.status -notmatch 'Not-Responding|Unknown') -and (-not $IgnoreOnlineStatus.IsPresent)) { Continue }
+            If (($engine.lastUpdatedDate -as [datetime]) -lt (Get-Date).AddHours(-2))    { Continue }
 
             Write-Verbose -Message "Processing '$($engine.name)' ($($engine.status)) ..."
             [int]$poolCount = 0

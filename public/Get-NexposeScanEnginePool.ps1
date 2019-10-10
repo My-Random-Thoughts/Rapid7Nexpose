@@ -12,8 +12,13 @@ Function Get-NexposeScanEnginePool {
     .PARAMETER Name
         The name of the engine pool
 
+    .PARAMETER IncludeEngines
+        Include the list of scan engines a particular engine pool will use
+        Applies only when specifying a specific engine pool
+
     .PARAMETER IncludeSites
         Include the list of sites a particular engine pool will scan
+        Applies only when specifying a specific engine pool
 
     .EXAMPLE
         Get-NexposeScanEnginePool -Id 10
@@ -37,6 +42,8 @@ Function Get-NexposeScanEnginePool {
         [Parameter(Mandatory = $true, ParameterSetName = 'byName')]
         [string]$Name,
 
+        [switch]$IncludeEngines,
+
         [switch]$IncludeSites
     )
 
@@ -44,6 +51,12 @@ Function Get-NexposeScanEnginePool {
         'byId' {
             If ($Id -gt 0) {
                 $Output = (Invoke-NexposeQuery -UrlFunction "scan_engine_pools/$Id" -RestMethod Get)
+
+                If ($IncludeEngines.IsPresent) {
+                    $engines = (Get-NexposeScanEnginePoolEngine -Id $Id)
+                    $Output | Add-Member -Name 'engines' -Value $engines -MemberType NoteProperty
+                }
+
                 If ($IncludeSites.IsPresent) {
                     $sites = (Get-NexposeScanEnginePoolSite -Id $Id)
                     $Output | Add-Member -Name 'sites' -Value $sites -MemberType NoteProperty
@@ -59,7 +72,7 @@ Function Get-NexposeScanEnginePool {
         'byName' {
             [int]$id = (ConvertTo-NexposeId -Name $Name -ObjectType ScanEnginePool)
             If ($id -gt 0) {
-                Get-NexposeScanEnginePool -Id $Id -IncludeSites:$IncludeSites
+                Get-NexposeScanEnginePool -Id $Id -IncludeEngines:$IncludeEngines -IncludeSites:$IncludeSites
             }
         }
     }
