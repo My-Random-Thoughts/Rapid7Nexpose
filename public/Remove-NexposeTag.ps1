@@ -39,7 +39,7 @@ Function Remove-NexposeTag {
         If ($pipeLine) { $Id = $pipeLine }
 
         ForEach ($item In $Id) {
-            If ($PSCmdlet.ShouldProcess()) {
+            If ($PSCmdlet.ShouldProcess($item)) {
                 $item = (ConvertTo-NexposeId -Name $item -ObjectType Tag)
                 Write-Output (Invoke-NexposeQuery -UrlFunction "tags/$item" -RestMethod Delete)
             }

@@ -42,7 +42,7 @@ Function Remove-NexposeSite {
             $itemId = (ConvertTo-NexposeId -Name $item -ObjectType Site)
 
             If ($itemId -gt 0) {
-                If ($PSCmdlet.ShouldProcess()) {
+                If ($PSCmdlet.ShouldProcess($itemId)) {
                     Write-Output (Invoke-NexposeQuery -UrlFunction "sites/$itemId" -RestMethod Delete)
                 }
             }

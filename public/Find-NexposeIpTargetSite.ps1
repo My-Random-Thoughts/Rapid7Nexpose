@@ -37,17 +37,45 @@ Function Find-NexposeIpTargetSite {
         [string[]]$ipRangeInclude = ((Invoke-NexposeQuery -UrlFunction "sites/$site/included_targets" -RestMethod Get).addresses)
         [string[]]$ipRangeExclude = ((Invoke-NexposeQuery -UrlFunction "sites/$site/excluded_targets" -RestMethod Get).addresses)
 
+        [string]$ipv4 = '(?:(?:2(?:[0-4][0-9]|5[0-5])|[0-1]?[0-9]?[0-9])\.){3}(?:(?:2([0-4][0-9]|5[0-5])|[0-1]?[0-9]?[0-9]))'
+
         ForEach ($ip In $ipRangeInclude) {
-            [version]$ipStart, [version]$ipEnd = (($ip.ToString()).Split('-'))
-            If (($ipConvert -ge $ipStart) -and ($ipConvert -le $ipEnd)) {
-                [void]$ReturnedSites.Add($site)
+            If ($ip -match "$ipv4 - $ipv4") {
+                [version]$ipStart, [version]$ipEnd = (($ip.ToString()).Split('-'))
+                If (($ipConvert -ge $ipStart) -and ($ipConvert -le $ipEnd)) {
+                    [void]$ReturnedSites.Add($site)
+                }
+            }
+            ElseIf ($ip -match $ipv4) {
+                If ($ip -eq $IpAddress) {
+                    [void]$ReturnedSites.Add($site)
+                }
+            }
+            Else {
+                [string]$hostName = ([System.Net.Dns]::GetHostByAddress($IpAddress).HostName)
+                If ($hostName -like "$ip*") {
+                    [void]$ReturnedSites.Add($site)
+                }
             }
         }
 
         ForEach ($ip In $ipRangeExclude) {
-            [version]$ipStart, [version]$ipEnd = (($ip.ToString()).Split('-'))
-            If (($ipConvert -ge $ipStart) -and ($ipConvert -le $ipEnd)) {
-                If ($ReturnedSites.Contains($site)) { [void]$ReturnedSites.Remove($site) }
+            If ($ip -match "$ipv4 - $ipv4") {
+                [version]$ipStart, [version]$ipEnd = (($ip.ToString()).Split('-'))
+                If (($ipConvert -ge $ipStart) -and ($ipConvert -le $ipEnd)) {
+                    [void]$ReturnedSites.Remove($site)
+                }
+            }
+            ElseIf ($ip -match $ipv4) {
+                If ($ip -eq $IpAddress) {
+                    [void]$ReturnedSites.Remove($site)
+                }
+            }
+            Else {
+                [string]$hostName = ([System.Net.Dns]::GetHostByAddress($IpAddress).HostName)
+                If ($hostName -like "$ip*") {
+                    [void]$ReturnedSites.Remove($site)
+                }
             }
         }
     }

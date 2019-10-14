@@ -52,7 +52,7 @@ Function Start-NexposeSiteScan {
             name = $Name
         }
 
-        If ([string]::IsNullOrEmpty($ComputerName) -eq $false) {
+        If ($AssetId.Count -gt 0) {
             $apiQuery += @{
                 hosts = @(
                     $AssetId

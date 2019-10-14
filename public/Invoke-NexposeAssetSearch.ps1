@@ -40,7 +40,7 @@ Function Invoke-NexposeAssetSearch {
     }
 
     Process {
-        If ($PSCmdlet.ShouldProcess()) {
+        If ($PSCmdlet.ShouldProcess($SearchQuery)) {
             Write-Output (Invoke-NexposeQuery -UrlFunction 'assets/search' -ApiQuery $SearchQuery -RestMethod Post)
         }
     }

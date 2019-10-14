@@ -36,7 +36,7 @@ Function Remove-NexposeSonarQuery {
         If ($pipeLine) { $Id = $pipeLine }
 
         ForEach ($item In $Id) {
-            If ($PSCmdlet.ShouldProcess()) {
+            If ($PSCmdlet.ShouldProcess($item)) {
                 Write-Output (Invoke-NexposeQuery -UrlFunction "sonar_queries/$Id" -RestMethod Delete)
             }
         }

@@ -105,7 +105,7 @@ Function Get-NexposeScanEngine {
         If ($status    -eq   '') { $status = 'Undefined' }
 
         If ((($scan.port -eq '-1') -and ($IncludeEnginePools.IsPresent)) -or ($scan.port -ne '-1')) {
-            $scan | Add-Member -MemberType NoteProperty -Name 'status' -Value $status
+            [void]($scan | Add-Member -MemberType NoteProperty -Name 'status' -Value $status)
             Write-Output $scan
         }
     }

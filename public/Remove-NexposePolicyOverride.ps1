@@ -36,7 +36,7 @@ Function Remove-NexposePolicyOverride {
         If ($pipeLine) { $Id = $pipeLine }
 
         ForEach ($item In $Id) {
-            If ($PSCmdlet.ShouldProcess()) {
+            If ($PSCmdlet.ShouldProcess($item)) {
                 Write-Output (Invoke-NexposeQuery -UrlFunction "policy_overrides/$item" -RestMethod Delete)
             }
         }
