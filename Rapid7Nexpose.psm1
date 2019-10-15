@@ -6,11 +6,7 @@ $Private = @( Get-ChildItem -Path $PSScriptRoot\Private\*.ps1 -ErrorAction Silen
 ForEach ($import in @($Public + $Private)) {
     Try {
         # Lightweight alternative to dotsourcing a function script
-        . (
-            [ScriptBlock]::Create(
-                [System.Io.File]::ReadAllText($Import)
-            )
-        )
+        . ([ScriptBlock]::Create([System.Io.File]::ReadAllText($import)))
     }
     Catch {
         Write-Error -Message "Failed to import function $($import.fullname): $_"
