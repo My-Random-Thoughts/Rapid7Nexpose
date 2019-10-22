@@ -13,7 +13,7 @@ Function New-NexposePolicyOverride {
         The identifier of the asset whose compliance results are to be overridden.
         Property is required if the property scope is set to either "specific-asset" or "specific-asset-until-next-scan"
 
-    .PARAMETER NewResult
+    .PARAMETER PolicyResult
         The new policy rule result after the override is applied.  Valid values: "pass" "fail" "not-applicable" "fixed"
 
     .PARAMETER Rule
@@ -23,7 +23,7 @@ Function New-NexposePolicyOverride {
         The date and time the policy override is set to expire.
 
     .PARAMETER Comment
-        A comment from the submitter as to why the override was submitted.
+        A comment from the submitter as to why the override was submitted.  This parameter has a maximum length of 1024 characters.
 
     .EXAMPLE
         New-NexposePolicyOverride
@@ -48,7 +48,7 @@ Function New-NexposePolicyOverride {
 
         [Parameter(Mandatory = $true)]
         [ValidateSet('pass','fail','not-applicable','fixed')]
-        [string]$NewResult,
+        [string]$PolicyResult,
 
         [Parameter(Mandatory = $true)]
         [int]$Rule,
@@ -56,25 +56,38 @@ Function New-NexposePolicyOverride {
         [datetime]$ExpiryDate,
 
         [Parameter(Mandatory = $true)]
+        [ValidateLength(1, 1024)]
         [string]$Comment
     )
 
     Begin {
-        [string]$State = 'under-review'
-        If (($Type -ne 'all-assets') -and ($AppliesToId -lt 1)) { Throw 'Invalid or missing "AssetId" value' }
+        If (($Type -ne 'all-assets') -and ($AssetId -lt 1)) {
+            Throw "Invalid or missing 'AssetId' value"
+        }
+
+        If ($Type -ne 'all-assets') {
+            If ((Test-NexposePolicyRule -RuleId $Rule -AssetId $AssetId) -ne $true) {
+                Throw 'Policy rule is not associated with this asset'
+            }
+        }
     }
 
     Process {
         $apiQuery = @{
-            state = $State
+            state = 'under-review'
             submit = @{
                 comment = $Comment
             }
             scope = @{
                 type = $Type
                 rule = $Rule
+                newResult = $PolicyResult
+            }
+        }
+
+        If (($AssetId) -and ($Type -ne 'all-assets')) {
+            $apiQuery.scope += @{
                 asset = $AssetId
-                newResult = $NewResult
             }
         }
 
@@ -84,7 +97,7 @@ Function New-NexposePolicyOverride {
             }
         }
 
-        If ($PSCmdlet.ShouldProcess($VulnerabilityId)) {
+        If ($PSCmdlet.ShouldProcess($VulnerabilityId, 'Create new policy override')) {
             Write-Output (Invoke-NexposeQuery -UrlFunction 'policy_overrides' -ApiQuery $apiQuery -RestMethod Post)
         }
     }
