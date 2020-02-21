@@ -32,7 +32,7 @@ Function Test-NexposeSearchCriteria {
         }
 
         # Set up the values
-        $types     = @{
+        $types = @{
             'alternate-address-type'         = ('0','1')                # 0=ipv4, 1=ipv6
             'containers'                     = ('present','not-present')
             'container-status'               = ('created','running','paused','restarting','exited','dead','unknown')
@@ -63,7 +63,7 @@ Function Test-NexposeSearchCriteria {
                 # Metasploit Exploits:        "values": ["type:\"exploit_source_type\", name:\"108\""]
                 # Exploit Database Exploits:  "values": ["type:\"exploit_source_type\", name:\"107\""]
         }
-        $fields    = @{
+        $fields = @{
             'alternate-address-type'         = ('in')
             'container-image'                = ('is','is-not','starts-with','ends-with','contains','does-not-contain','is-like','not-like')
             'container-status'               = ('is','is-not')
@@ -90,7 +90,7 @@ Function Test-NexposeSearchCriteria {
             'ip-address-type'                = ('in','not-in')
             'last-scan-date'                 = ('is-on-or-before','is-on-or-after','is-between','is-earlier-than','is-within-the-last')
             'location-tag'                   = ('is','is-not','starts-with','ends-with','contains','does-not-contain','is-applied','is-not-applied')
-            'mobile-device-last-sync'        = ('is-within-the-last','is-earlier-than')
+            'mobile-device-last-sync-time'   = ('is-within-the-last','is-earlier-than')
             'open-ports'                     = ('is','is-not','in-range')
             'operating-system'               = ('contains','does-not-contain','is-empty','is-not-empty')
             'owner-tag'                      = ('is','is-not','starts-with','ends-with','contains','does-not-contain','is-applied','is-not-applied')
@@ -99,11 +99,11 @@ Function Test-NexposeSearchCriteria {
             'service-name'                   = ('contains','does-not-contain')
             'site-id'                        = ('in','not-in')
             'software'                       = ('contains','does-not-contain')
-            'vasset-cluster'                 = ('is','is-not','contains','does-not-contain','starts-with')
-            'vasset-datacenter'              = ('is','is-not')
-            'vasset-host name'               = ('is','is-not','contains','does-not-contain','starts-with')
-            'vasset-power state'             = ('in','not-in')
-            'vasset-resource pool path'      = ('contains','does-not-contain')
+            'vAsset-cluster'                 = ('is','is-not','contains','does-not-contain','starts-with')
+            'vAsset-datacenter'              = ('is','is-not')
+            'vAsset-host-name'               = ('is','is-not','contains','does-not-contain','starts-with')
+            'vAsset-power-state'             = ('in','not-in')
+            'vAsset-resource-pool-path'      = ('contains','does-not-contain')
             'vulnerability-assessed'         = ('is-on-or-before','is-on-or-after','is-between','is-earlier-than','is-within-the-last')
             'vulnerability-category'         = ('is','is-not','starts-with','ends-with','contains','does-not-contain')
             'vulnerability-cvss-score'       = ('is','is-not','in-range','is-greater-than','is-less-than')
@@ -116,6 +116,7 @@ Function Test-NexposeSearchCriteria {
             'are'                = 'string'
             'contains'           = 'string'
             'does-not-contain'   = 'string'
+            'does-not-include'   = 'array'
             'ends-with'          = 'string'
             'in'                 = 'array'
             'in-range'           = 'upper-lower'
@@ -222,11 +223,14 @@ Function Test-NexposeSearchCriteria {
                             If ([string]::IsNullOrEmpty($v) -eq $false) {
                                 If ($types.$f -contains $v) { $ReturnValue[$ReturnCounter] = $true }
                             }
-                            If ([string]::IsNullOrEmpty($a) -eq $false) {
+                            ElseIf ([string]::IsNullOrEmpty($a) -eq $false) {
                                 ForEach ($x in $a) {
-                                    If ($types.$f -contains $x)    { $ReturnValue[$ReturnCounter] = $true  }
+                                    If ($types.$f -contains    $x) { $ReturnValue[$ReturnCounter] = $true  }
                                     If ($types.$f -notcontains $x) { $ReturnValue[$ReturnCounter] = $false }
                                 }
+                            }
+                            Else {
+                                Write-Error 'Undefined Error Found'
                             }
                         }
                     }
@@ -240,7 +244,7 @@ Function Test-NexposeSearchCriteria {
             }
 
             If ($($ReturnValue[$ReturnCounter]) -eq $false) {
-                Return "Invalid filter value or input type."
+                Return "Invalid filter value or input type.  Valid entries are: ^$($types.$f -join '^')^^ You entered: $v$a."
             }
             $ReturnCounter++
         }
