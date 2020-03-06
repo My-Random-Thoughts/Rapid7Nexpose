@@ -66,14 +66,8 @@ Function New-NexposeCredential {
         [ValidateSet('as400','cifs','cifshash','cvs','db2','ftp','http','ms-sql','mysql','notes','oracle','pop','postgresql','remote-exec','snmp','snmpv3','ssh','ssh-key','sybase','telnet')]
         [string]$Service,
 
-        [Parameter(ParameterSetName = 'byRestriction')]
-        [Parameter(ParameterSetName = 'byShared')]
-        [Parameter(ParameterSetName = 'bySite')]
         [string]$HostRestriction,
 
-        [Parameter(ParameterSetName = 'byRestriction')]
-        [Parameter(ParameterSetName = 'byShared')]
-        [Parameter(ParameterSetName = 'bySite')]
         [ValidateRange(1, 65535)]
         [int]$PortRestriction,
 
@@ -234,7 +228,9 @@ Function New-NexposeCredential {
         $BoundKeys = ($PSBoundParameters.Keys | Where-Object { (Get-Command _temp | Select-Object -ExpandProperty Parameters).Keys -notcontains $_ })
         ForEach ($param in $BoundKeys) {
             If (-not (Get-Variable -Name $param -ErrorAction SilentlyContinue)) {
-                Write-Verbose "Adding variable for dynamic parameter '$param' with value '$($PSBoundParameters.$param)'"
+                If (-not ($param -match 'Password|PEMKey|NTLMHash')) {
+                    Write-Verbose "Adding variable for dynamic parameter '$param' with value '$($PSBoundParameters.$param)'"
+                }
                 New-Variable -Name $Param -Value $PSBoundParameters.$param
             }
         }
@@ -246,22 +242,12 @@ Function New-NexposeCredential {
             description = $Description
         }
 
-        Switch ($PSCmdlet.ParameterSetName) {
-            'bySite' {
-                # Do Nothing
-            }
+        $apiQuery += @{ siteAssignment = $SiteAssignment }
+        If ($SiteAssignment -eq 'specific-sites') { $apiQuery += @{ sites = @($Site) }}
 
-            'byShared' {
-                $apiQuery += @{ siteAssignment = $SiteAssignment }
-                If ($SiteAssignment -eq 'specific-sites') { $apiQuery += @{ sites = @($Site) }}
-            }
-
-            'byRestriction' {
-                If ([string]::IsNullOrEmpty($HostRestriction) -eq $false) {
-                    $apiQuery += @{ hostRestriction = $HostRestriction }
-                    If ([string]::IsNullOrEmpty($PortRestriction) -eq $false) { $apiQuery += @{ portRestriction = $PortRestriction }}
-                }
-            }
+        If (-not [string]::IsNullOrEmpty($HostRestriction)) {
+            $apiQuery += @{ hostRestriction = $HostRestriction }
+            If ($PortRestriction -ne 0) { $apiQuery += @{ portRestriction = $PortRestriction }}
         }
 
         Switch ($Service) {
