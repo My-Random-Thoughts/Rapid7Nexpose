@@ -60,8 +60,18 @@ Function Invoke-NexposeQuery {
         [int]   $Port     = $($global:NexposeSession.Headers['Port'])
         [string]$ApiUri   = ('https://{0}:{1}/api/3/{2}' -f $HostName, $Port, $UrlFunction)
 
-        # Hack for 'Start-NexposeAssetScan'
-        If ($UrlFunction -eq 'asset/scan')  { $ApiUri = $ApiUri.Replace('/api/3/', '/api/2.1/') }
+        If ($UrlFunction -eq 'asset/scan') { $ApiUri = $ApiUri.Replace('/api/3/', '/api/2.1/') }    # Hack for 'Start-NexposeAssetScan'
+        If ($UrlFunction -eq 'assets/search') {    # Hack for stupid naming convention from Rapid7
+            ForEach ($filter In $($ApiQuery.Filters)) {
+                If ($filter.field -eq 'vulnerability-exposures') {
+                    Switch ($filter.values) {
+                        'malwarekit_exploits'       { $filter.values = @('type:"malware_type", name:"malwarekit"') }
+                        'exploit_database_exploits' { $filter.values = @('type:"exploit_source_type", name:"107"') }
+                        'metasploit_exploits'       { $filter.values = @('type:"exploit_source_type", name:"108"') }
+                    }
+                }
+            }
+        }
 
         [hashtable]$iRestM = @{
             Uri        = $ApiUri
@@ -169,7 +179,7 @@ Function Invoke-NexposeQuery {
             Catch {
                 $errMsg3 = $_.Exception.Message
             }
-            Write-Error "`n$errMsg1`n$errMsg2`n$errMsg3"
+            Throw "`n$errMsg1`n$errMsg2`n$errMsg3"
         }
     }
 
