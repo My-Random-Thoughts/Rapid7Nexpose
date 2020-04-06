@@ -50,7 +50,7 @@ Function New-NexposeSiteScanSchedule {
         Run a scan every 1st of the month, every 3 months
 
     .NOTES
-        For additional information please contact PlatformBuild@transunion.co.uk
+        For additional information please see my GitHub wiki page
 
     .FUNCTIONALITY
         POST: sites/{id}/scan_schedules

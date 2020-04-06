@@ -10,16 +10,19 @@ Function New-NexposeScanEngine {
         The name of the scan engine
 
     .PARAMETER Address
-        The address the scan engine is hosted
+        The ip address of the scan engine
 
     .PARAMETER Port
-        The port used by the scan engine to communicate with the Security Console.  Defaults to 40894
+        The port used by the scan engine to communicate with the Security Console
 
-    .PARAMETER Site
-        A list of identifiers of each site the scan engine is assigned to
+    .PARAMETER SiteId
+        The identifier of a site the scan engine is assigned to
 
     .EXAMPLE
-        New-NexposeScanEngine -Name 'Engine B' -Address '1.2.3.4' -Site @(4, 5, 6)
+        New-NexposeScanEngine -Name 'ScanEngine001' -Address 192.168.1.101 -Port 40814
+
+    .EXAMPLE
+        New-NexposeScanEngine -Name 'ScanEngine001' -Address 192.168.1.101 -Port 40814 -SiteId (1, 2, 6, 10)
 
     .NOTES
         For additional information please see my GitHub wiki page
@@ -37,26 +40,33 @@ Function New-NexposeScanEngine {
         [string]$Name,
 
         [Parameter(Mandatory = $true)]
-        [string]$Address,
+        [ipaddress]$Address,
 
-        [int]$Port = 40894,
+        [ValidateRange(1, 65535)]
+        [int]$Port = 40814 #,
 
-        [int[]]$Site
+        #[int[]]$SiteId    # BUG: 00166801
     )
 
     Begin {
+        # Check Name and Address are unique
+        If ($(Get-NexposeScanEngine -Name    $Name  -IncludeEnginePools)) { Throw "The name '$Name' is already in use." }
+        If ($(Get-NexposeScanEngine -Address $Address.IPAddressToString)) { Throw "The address '$Address' is already in use." }
     }
 
     Process {
         $apiQuery = @{
-            name    = $Name
-            address = $Address
-            port    = $Port
+            address = ($Address.IPAddressToString)
+            name    =  $Name
+            port    =  $Port
         }
 
-        If ($Site.Count -gt 0) { $apiQuery += @{ sites = @($Site) }}
+# BUG: 00166801 - This does not work:
+#        If ($SiteId.Count -gt 0) {
+#            $apiQuery += @{ sites = $SiteId }
+#        }
 
-        If ($PSCmdlet.ShouldProcess($Name)) {
+        If ($PSCmdlet.ShouldProcess("$Name ($($Address.IPAddressToString))")) {
             Write-Output (Invoke-NexposeQuery -UrlFunction 'scan_engines' -ApiQuery $apiQuery -RestMethod Post)
         }
     }

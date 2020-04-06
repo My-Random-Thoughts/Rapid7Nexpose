@@ -28,7 +28,7 @@ Function New-NexposeSiteCredential {
         New-NexposeSiteCredential -Name 'Domain Admin' -SiteId 3 -Service cifs -Domain 'example.com' -Username 'BillyJoeBob' -Password 'Password!'
 
     .NOTES
-        For additional information please contact PlatformBuild@transunion.co.uk
+        For additional information please see my GitHub wiki page
 
     .FUNCTIONALITY
         GET: sites/{id}/site_credentials

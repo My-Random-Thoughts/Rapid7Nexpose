@@ -19,7 +19,7 @@ Function Get-NexposeUserLastLogon {
         Get-NexposeUserLastLogon -Name JoeBlogg
 
     .NOTES
-        For additional information please contact PlatformBuild@transunion.co.uk
+        For additional information please see my GitHub wiki page
 
     .FUNCTIONALITY
         None

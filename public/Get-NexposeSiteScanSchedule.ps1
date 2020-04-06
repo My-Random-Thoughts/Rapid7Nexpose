@@ -16,7 +16,7 @@ Function Get-NexposeSiteScanSchedule {
         The identifier of the scan schedule
 
     .EXAMPLE
-        Get-NexposeSiteScanSchedule -Id 23
+        Get-NexposeSiteScanSchedule -SiteId 23
 
     .EXAMPLE
         Get-NexposeSiteScanSchedule -Name 'Site B' -ScheduleId 4
@@ -34,6 +34,7 @@ Function Get-NexposeSiteScanSchedule {
         https://github.com/My-Random-Thoughts/Rapid7Nexpose
 #>
 
+    [CmdletBinding(DefaultParameterSetName = 'byId')]
     Param (
         [Parameter(Mandatory = $true, ParameterSetName = 'byId')]
         [int]$Id,

@@ -31,7 +31,7 @@ Function New-NexposeSharedCredential {
         New-NexposeSharedCredential -Name 'Domain Admin' -SiteId 3 -Service cifs -Domain 'example.com' -Username 'BillyJoeBob' -Password 'Password!'
 
     .NOTES
-        For additional information please contact PlatformBuild@transunion.co.uk
+        For additional information please see my GitHub wiki page
 
     .FUNCTIONALITY
         GET: shared_credentials

@@ -37,7 +37,7 @@ Function Get-NexposeUser {
         Get-NexposeUser -Name JoeBlogg
 
     .NOTES
-        For additional information please contact PlatformBuild@transunion.co.uk
+        For additional information please see my GitHub wiki page
 
     .FUNCTIONALITY
         GET: users
