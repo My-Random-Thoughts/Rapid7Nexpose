@@ -1,4 +1,4 @@
-Function Invoke-NexposeQuery {
+﻿Function Invoke-NexposeQuery {
 <#
     .SYNOPSIS
         Invokes the RestAPI for Nexpose
@@ -28,10 +28,13 @@ Function Invoke-NexposeQuery {
         Invoke-NexposeQuery -UrlFunction 'sites/3/scans' -ApiQuery $apiQuery -RestMethod Post
 
     .NOTES
-        For additional information please see my GitHub wiki page
+        For additional information please contact PlatformBuild@transunion.co.uk
+
+    .FUNCTIONALITY
+        None
 
     .LINK
-        https://github.com/My-Random-Thoughts/Rapid7Nexpose
+        https://callcreditgroup.sharepoint.com/cto/dev%20ops/PlatformBuild/default.aspx
 #>
 
     [CmdletBinding()]

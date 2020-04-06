@@ -1,4 +1,4 @@
-Function Remove-NexposeLink {
+﻿Function Remove-NexposeLink {
 <#
     .SYNOPSIS
         Removes any 'LINKS' items from returned REST data
@@ -16,7 +16,7 @@ Function Remove-NexposeLink {
         For additonal information please contact PlatformBuild@callcreditgroup.com
 
     .LINK
-        https://github.com/My-Random-Thoughts/Rapid7Nexpose
+        https://callcreditgroup.sharepoint.com/cto/dev%20ops/PlatformBuild/default.aspx
 #>
 
     [CmdletBinding(SupportsShouldProcess)]
@@ -25,6 +25,7 @@ Function Remove-NexposeLink {
         [object[]]$InputObject
     )
 
+    Write-Verbose -Message 'Removing "links" item from results'
     ForEach ($obj In $InputObject) {
         # Check to see if there is anything other than links
         [string[]]$pNames = (($obj | Get-Member -MemberType *Property).Name)

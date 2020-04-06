@@ -1,4 +1,4 @@
-Function ConvertTo-NexposeId {
+﻿Function ConvertTo-NexposeId {
 <#
     .SYNOPSIS
         Returns the specified asset id
@@ -22,7 +22,7 @@ Function ConvertTo-NexposeId {
         For additonal information please contact PlatformBuild@callcreditgroup.com
 
     .LINK
-        https://github.com/My-Random-Thoughts/Rapid7Nexpose
+        https://callcreditgroup.sharepoint.com/cto/dev%20ops/PlatformBuild/default.aspx
 #>
 
     [CmdletBinding()]
@@ -70,10 +70,11 @@ Function ConvertTo-NexposeId {
                     'AuthSource'     { $url = 'authentication_sources'; $obj = 'type' }
                     'Report'         { $url = 'reports';                $obj = 'name' }
                     'ScanEnginePool' { $url = 'scan_engine_pools';      $obj = 'name' }
+                    'ScanTemplate'   { $url = 'scan_templates';         $obj = 'name' }
                     'Site'           { $url = 'sites';                  $obj = 'name' }
                     'Tag'            { $url = 'tags';                   $obj = 'name' }
                 }
-                $result = (((Invoke-NexposeQuery -UrlFunction $url -RestMethod Get) | Where-Object {  $_.$obj -eq $Name }).id)
+                $result = (((Invoke-NexposeQuery -UrlFunction $url -RestMethod Get) | Where-Object { $_.$obj -eq $Name }).id)
             }
         }
     }
