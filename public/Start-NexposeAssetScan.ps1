@@ -37,7 +37,7 @@ Function Start-NexposeAssetScan {
         Start-NexposeAssetScan -Name 'Scan 1' -SiteId 4 -AssetId 42 -Wait -UpdateTimeSpan (New-TimeSpan -Seconds 10)
 
     .NOTES
-        For additional information please contact PlatformBuild@transunion.co.uk
+        For additional information please see my GitHub wiki page
 
     .FUNCTIONALITY
         POST: asset/scan    # Not a valid APIv3 endpoint - Action is not possible in v3

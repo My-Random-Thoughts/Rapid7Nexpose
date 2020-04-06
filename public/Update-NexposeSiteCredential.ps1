@@ -28,7 +28,7 @@ Function Update-NexposeSiteCredential {
         Update-NexposeSiteCredential -SiteId 123 -Id 42 -Description 'New Cred Description' -Password 'Passw0rd!'
 
     .NOTES
-        For additional information please contact PlatformBuild@transunion.co.uk
+        For additional information please see my GitHub wiki page
 
     .FUNCTIONALITY
         PUT: sites/{id}/site_credentials/{credentialId}

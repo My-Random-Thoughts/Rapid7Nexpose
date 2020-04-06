@@ -22,7 +22,7 @@ Function Update-NexposeScanEnginePool {
         Update-NexposeScanEnginePool -Id 6 -ScanEngine @('uk-west-engine-01','uk-west-engine-02')
 
     .NOTES
-        For additional information please contact PlatformBuild@transunion.co.uk
+        For additional information please see my GitHub wiki page
 
     .FUNCTIONALITY
         PUT: scan_engine_pools/{id}

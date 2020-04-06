@@ -22,7 +22,7 @@ Function Remove-NexposeSiteScanSchedule {
         Remove-NexposeSiteScanSchedule -Name 'Site B' -ScheduleId 4
 
     .NOTES
-        For additional information please contact PlatformBuild@transunion.co.uk
+        For additional information please see my GitHub wiki page
 
     .FUNCTIONALITY
         DELETE: sites/{id}/scan_schedules/{scheduleId}

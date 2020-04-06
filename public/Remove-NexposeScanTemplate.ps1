@@ -13,7 +13,7 @@ Function Remove-NexposeScanTemplate {
         Remove-NexposeScanTemplate -Id 'abc'
 
     .NOTES
-        For additional information please contact PlatformBuild@transunion.co.uk
+        For additional information please see my GitHub wiki page
 
     .FUNCTIONALITY
         DELETE: scan_templates/{id}

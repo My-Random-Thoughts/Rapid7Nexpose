@@ -22,7 +22,7 @@ Function Remove-NexposeTagFromObject {
         Remove-NexposeTagFromObject -ObjectType Site -ObjectId 2
 
     .NOTES
-        For additional information please contact PlatformBuild@transunion.co.uk
+        For additional information please see my GitHub wiki page
 
     .FUNCTIONALITY
         DELETE: assets/{id}/tags/{tagId}
