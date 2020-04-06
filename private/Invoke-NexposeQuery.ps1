@@ -28,7 +28,7 @@ Function Invoke-NexposeQuery {
         Invoke-NexposeQuery -UrlFunction 'sites/3/scans' -ApiQuery $apiQuery -RestMethod Post
 
     .NOTES
-        For additional information please contact PlatformBuild@transunion.co.uk
+        For additional information please see my GitHub wiki page
 
     .FUNCTIONALITY
         None

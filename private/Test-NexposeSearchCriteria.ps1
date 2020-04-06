@@ -13,7 +13,7 @@ Function Test-NexposeSearchCriteria {
         Test-NexposeSearchCriteria -SearchCriteria @{filters = @(@{field='ip-address'; operator='is-like'; value='172.16.*'}, @{field='host-name'; operator='starts-with'; value='SVR'}); match='all'}
 
     .NOTES
-        For additional information please contact PlatformBuild@transunion.co.uk
+        For additional information please see my GitHub wiki page
 
     .LINK
         https://github.com/My-Random-Thoughts/Rapid7Nexpose

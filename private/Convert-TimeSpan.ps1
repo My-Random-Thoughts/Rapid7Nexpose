@@ -39,7 +39,7 @@ Function Convert-TimeSpan {
         Returns 'PT25.5H'
 
     .NOTES
-        For additional information please contact PlatformBuild@transunion.co.uk
+        For additional information please see my GitHub wiki page
 
     .FUNCTIONALITY
         None

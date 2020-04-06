@@ -19,7 +19,7 @@ Function Test-FrequencyString {
         Test-FrequencyString -Frequency 'Every 3rd of the month repeat every 2 months'
 
     .NOTES
-        For additional information please contact PlatformBuild@transunion.co.uk
+        For additional information please see my GitHub wiki page
 
     .FUNCTIONALITY
         None
