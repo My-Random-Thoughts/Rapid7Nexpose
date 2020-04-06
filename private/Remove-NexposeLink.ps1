@@ -1,4 +1,4 @@
-﻿Function Remove-NexposeLink {
+Function Remove-NexposeLink {
 <#
     .SYNOPSIS
         Removes any 'LINKS' items from returned REST data
@@ -16,7 +16,7 @@
         For additonal information please contact PlatformBuild@callcreditgroup.com
 
     .LINK
-        https://callcreditgroup.sharepoint.com/cto/dev%20ops/PlatformBuild/default.aspx
+        https://github.com/My-Random-Thoughts/Rapid7Nexpose
 #>
 
     [CmdletBinding(SupportsShouldProcess)]

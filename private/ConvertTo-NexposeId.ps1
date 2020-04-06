@@ -1,4 +1,4 @@
-﻿Function ConvertTo-NexposeId {
+Function ConvertTo-NexposeId {
 <#
     .SYNOPSIS
         Returns the specified asset id
@@ -22,7 +22,7 @@
         For additonal information please contact PlatformBuild@callcreditgroup.com
 
     .LINK
-        https://callcreditgroup.sharepoint.com/cto/dev%20ops/PlatformBuild/default.aspx
+        https://github.com/My-Random-Thoughts/Rapid7Nexpose
 #>
 
     [CmdletBinding()]

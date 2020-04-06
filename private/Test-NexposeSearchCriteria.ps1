@@ -13,7 +13,7 @@ Function Test-NexposeSearchCriteria {
         Test-NexposeSearchCriteria -SearchCriteria @{filters = @(@{field='ip-address'; operator='is-like'; value='172.16.*'}, @{field='host-name'; operator='starts-with'; value='SVR'}); match='all'}
 
     .NOTES
-        For additional information please see my GitHub wiki page
+        For additional information please contact PlatformBuild@transunion.co.uk
 
     .LINK
         https://github.com/My-Random-Thoughts/Rapid7Nexpose
@@ -55,14 +55,10 @@ Function Test-NexposeSearchCriteria {
             'pci-compliance'                 = ('0','1')                # 0=fail, 1=pass
             'vulnerability-validated-status' = ('present','not-present')
             'vasset-power state'             = ('poweredOn','poweredOff','suspended')
-
-            # CUSTOM WORK AROUND REQURIED FOR THIS WHEN WRITING THE QUERIES
-            #'vulnerability-exposures'        = ('malwarekit_exploits','metasploit_exploits','exploit_database_exploits')
-            'vulnerability-exposures'        = ('type:"malware_type", name:"malwarekit"','type:"exploit_source_type", name:"107"','type:"exploit_source_type", name:"108"')
-                # Malware Kit Exploits:       "values": ["type:\"malware_type\", name:\"malwarekit\""]
-                # Metasploit Exploits:        "values": ["type:\"exploit_source_type\", name:\"108\""]
-                # Exploit Database Exploits:  "values": ["type:\"exploit_source_type\", name:\"107\""]
+            'vulnerability-exposures'        = ('malwarekit_exploits','exploit_database_exploits','metasploit_exploits',
+                                                'type:"malware_type", name:"malwarekit"','type:"exploit_source_type", name:"107"','type:"exploit_source_type", name:"108"')
         }
+
         $fields = @{
             'alternate-address-type'         = ('in')
             'container-image'                = ('is','is-not','starts-with','ends-with','contains','does-not-contain','is-like','not-like')
@@ -112,6 +108,7 @@ Function Test-NexposeSearchCriteria {
             'vulnerability-title'            = ('contains','does-not-contain','is','is-not','starts-with','ends-with')
             'vulnerability-validated-status' = ('are')
         }
+
         $operators = @{
             'are'                = 'string'
             'contains'           = 'string'
@@ -154,59 +151,62 @@ Function Test-NexposeSearchCriteria {
         }
 
         ForEach ($filter In $($SearchCriteria.filters)) {
-            [string]$f = $filter.field
-            [string]$o = $filter.operator
-            [object]$v = $filter.value
-            [object]$a = $filter.values
-            [object]$l = $filter.lower
-            [object]$u = $filter.upper
-
             $ReturnValue[$ReturnCounter] = $false
 
-            If ($fields.Keys -contains $f) {
-                If ($fields.$f -contains $o) {
-                    Switch ($($operators.$o)) {
+            If ($fields.Keys -contains $($filter.field)) {
+                If ($fields.$($filter.field) -contains $($filter.operator)) {
+                    Switch ($($operators.$($filter.operator))) {
                         'array' {
-                            If (([string]::IsNullOrEmpty($a) -eq $false) -and ($a.Count -gt 0)) {
+                            If (([string]::IsNullOrEmpty($($filter.values)) -eq $false) -and ($($filter.values).Count -gt 0)) {
                                 $ReturnValue[$ReturnCounter] = $true
                             }
                         }
 
                         'datetime' {
-                            If (([string]::IsNullOrEmpty($v) -eq $false) -and ($v -as [datetime])) {
+                            If (([string]::IsNullOrEmpty($($filter.value)) -eq $false) -and ($($filter.value) -as [datetime])) {
                                 $ReturnValue[$ReturnCounter] = $true
                             }
                         }
 
                         'numeric' {
-                            If (([string]::IsNullOrEmpty($v) -eq $false) -and ($v -match '^[0-9]+(?:.[0-9]+)?$') -and ($v.GetType().ToString() -ne 'system.string')) {
+                            If (([string]::IsNullOrEmpty($($filter.value)) -eq $false) -and ($($filter.value) -match '^[0-9]+(?:.[0-9]+)?$') -and ($($filter.value).GetType().ToString() -ne 'system.string')) {
                                 $ReturnValue[$ReturnCounter] = $true
                             }
                         }
 
                         'string' {
-                            If (([string]::IsNullOrEmpty($v) -eq $false) -and ($v.GetType().ToString() -is [string]) -and ($v.Count -eq 1)) {
+                            If (([string]::IsNullOrEmpty($($filter.value)) -eq $false) -and ($($filter.value).GetType().ToString() -is [string]) -and ($($filter.value).Count -eq 1)) {
                                 $ReturnValue[$ReturnCounter] = $true
                             }
                         }
 
                         'upper-lower' {
-                            If (([string]::IsNullOrEmpty($l) -eq $false) -and ([string]::IsNullOrEmpty($u) -eq $false)) {
-                                If (($l -match '^[0-9]+$') -and ($u -match '^[0-9]+$')) {
-                                    If (($l -as [int]) -lt ($u -as [int])) {
-                                        $ReturnValue[$ReturnCounter] = $true
+                                [datetime]$dateValue = New-Object -TypeName 'DateTime'
+                                [version] $verValue  = New-Object -TypeName 'Version'
+                                If (([string]::IsNullOrEmpty($($filter.lower)) -eq $false) -and ([string]::IsNullOrEmpty($($filter.upper)) -eq $false)) {
+                                    If (($($filter.lower) -match '^[0-9]+$') -and ($($filter.upper) -match '^[0-9]+$')) {
+                                        If (($($filter.lower) -as [int]) -lt ($($filter.upper) -as [int])) {
+                                            $ReturnValue[$ReturnCounter] = $true
+                                        }
                                     }
-                                }
-                                Else {
-                                    If (($l -as [version]) -lt ($u -as [version])) {
-                                        $ReturnValue[$ReturnCounter] = $true
+                                    ElseIf (([datetime]::TryParse($($filter.lower), [ref]$dateValue)) -and ([datetime]::TryParse($($filter.upper), [ref]$dateValue))) {
+                                        If ([datetime]::Compare($($filter.lower), $($filter.upper)) -lt 0) {
+                                            $ReturnValue[$ReturnCounter] = $true
+                                        }
+                                    }
+                                    ElseIf (([version]::TryParse($($filter.lower), [ref]$verValue)) -and ([version]::TryParse($($filter.upper), [ref]$verValue))) {
+                                        If (($($filter.lower) -as [version]) -lt ($($filter.upper) -as [version])) {
+                                            $ReturnValue[$ReturnCounter] = $true
+                                        }
+                                    }
+                                    Else {
+                                        $ReturnValue[$ReturnCounter] = $false
                                     }
                                 }
                             }
-                        }
 
                         'none' {
-                            If ($null -eq $v) {
+                            If ($null -eq $($filter.value)) {
                                 $ReturnValue[$ReturnCounter] = $true
                             }
                         }
@@ -217,26 +217,26 @@ Function Test-NexposeSearchCriteria {
                     }
 
                     # Does the TYPES list contain this FIELD
-                    If (($ReturnValue[$ReturnCounter] -eq $true) -and ($operators.$o -ne 'none')) {
-                        If ($types.Keys -contains $f) {
+                    If (($ReturnValue[$ReturnCounter] -eq $true) -and ($operators.$($filter.operator) -ne 'none')) {
+                        If ($types.Keys -contains $($filter.field)) {
                             $ReturnValue[$ReturnCounter] = $false
-                            If ([string]::IsNullOrEmpty($v) -eq $false) {
-                                If ($types.$f -contains $v) { $ReturnValue[$ReturnCounter] = $true }
+                            If ([string]::IsNullOrEmpty($($filter.value)) -eq $false) {
+                                If ($types.$($filter.field) -contains $($filter.value)) { $ReturnValue[$ReturnCounter] = $true }
                             }
-                            ElseIf ([string]::IsNullOrEmpty($a) -eq $false) {
-                                ForEach ($x in $a) {
-                                    If ($types.$f -contains    $x) { $ReturnValue[$ReturnCounter] = $true  }
-                                    If ($types.$f -notcontains $x) { $ReturnValue[$ReturnCounter] = $false }
+                            ElseIf ([string]::IsNullOrEmpty($($filter.values)) -eq $false) {
+                                ForEach ($values in $($filter.values)) {
+                                    If ($types.$($filter.field) -contains    $values) { $ReturnValue[$ReturnCounter] = $true  }
+                                    If ($types.$($filter.field) -notcontains $values) { $ReturnValue[$ReturnCounter] = $false }
                                 }
                             }
                             Else {
-                                Write-Error 'Undefined Error Found'
+                                Write-Error 'We should never see this'
                             }
                         }
                     }
                 }
                 Else {
-                    Return "Invalid filter operator for this field.  Valid entries are: '$($fields.$f -join ', ')"
+                    Return "Invalid filter operator for this field.  Valid entries are: '$($fields.$($filter.field) -join ', ')"
                 }
             }
             Else {
@@ -244,7 +244,7 @@ Function Test-NexposeSearchCriteria {
             }
 
             If ($($ReturnValue[$ReturnCounter]) -eq $false) {
-                Return "Invalid filter value or input type.  Valid entries are: ^$($types.$f -join '^')^^ You entered: $v$a."
+                Return "Invalid filter value or input type.  Valid entries are: ^$($types.$($filter.field) -join '^')^^ You entered: $($filter.value) $($filter.values)."
             }
             $ReturnCounter++
         }

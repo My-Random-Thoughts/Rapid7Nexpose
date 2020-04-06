@@ -1,4 +1,4 @@
-﻿Function Invoke-NexposeQuery {
+Function Invoke-NexposeQuery {
 <#
     .SYNOPSIS
         Invokes the RestAPI for Nexpose
@@ -34,7 +34,7 @@
         None
 
     .LINK
-        https://callcreditgroup.sharepoint.com/cto/dev%20ops/PlatformBuild/default.aspx
+        https://github.com/My-Random-Thoughts/Rapid7Nexpose
 #>
 
     [CmdletBinding()]
