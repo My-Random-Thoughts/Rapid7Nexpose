@@ -19,7 +19,7 @@ Function Add-NexposeScanEngineToPool {
         Add-NexposeScanEngineToPool -PoolId 42 -EngineId (100, 101) -ReplaceExisting
 
     .NOTES
-        For additional information please contact PlatformBuild@transunion.co.uk
+        For additional information please see my GitHub wiki page
 
     .FUNCTIONALITY
         PUT: scan_engine_pools/{id}/engines/{engineId}

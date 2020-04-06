@@ -19,7 +19,7 @@ Function Add-NexposeUserToSite {
         Add-NexposeUserToSite -UserId 5 -SiteId (23, 'Site B')
 
     .NOTES
-        For additional information please contact PlatformBuild@transunion.co.uk
+        For additional information please see my GitHub wiki page
 
     .FUNCTIONALITY
         PUT: users/{id}/sites/{siteId}

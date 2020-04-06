@@ -26,7 +26,7 @@ Function Connect-NexposeAPI {
         Connect-NexposeAPI -HostName 10.1.2.3 -Credential $creds
 
     .NOTES
-        For additional information please contact PlatformBuild@transunion.co.uk
+        For additional information please see my GitHub wiki page
 
     .FUNCTIONALITY
         None

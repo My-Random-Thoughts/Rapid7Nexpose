@@ -16,7 +16,7 @@ Function Add-NexposeAssetToGroup {
         Add-NexposeAssetToGroup -GroupId 2 -AssetId @(12, 24, 48)
 
     .NOTES
-        For additional information please contact PlatformBuild@transunion.co.uk
+        For additional information please see my GitHub wiki page
 
     .FUNCTIONALITY
         GET: asset_groups/{id}

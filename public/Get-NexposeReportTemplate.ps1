@@ -13,7 +13,7 @@ Function Get-NexposeReportTemplate {
         Get-NexposeReportTemplate -Id 'audit-report'
 
     .NOTES
-        For additional information please contact PlatformBuild@transunion.co.uk
+        For additional information please see my GitHub wiki page
 
     .FUNCTIONALITY
         GET: report_templates

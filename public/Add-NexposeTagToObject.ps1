@@ -22,7 +22,7 @@ Function Add-NexposeTagToObject {
         Add-NexposeTagToObject -TagId 3 -ObjectId 2 -ObjectType Site
 
     .NOTES
-        For additional information please contact PlatformBuild@transunion.co.uk
+        For additional information please see my GitHub wiki page
 
     .FUNCTIONALITY
         PUT: tags/{id}/assets/{assetId}
