@@ -12,9 +12,6 @@ Function Add-NexposeScanEngineToPool {
     .PARAMETER EngineId
         The identifier of the scan engine
 
-    .PARAMETER ReplaceExisting
-        Option to remove all existing scan engines first
-
     .EXAMPLE
         Add-NexposeScanEngineToPool -PoolId 42 -EngineId (100, 101, 102)
 
@@ -22,7 +19,7 @@ Function Add-NexposeScanEngineToPool {
         Add-NexposeScanEngineToPool -PoolId 42 -EngineId (100, 101) -ReplaceExisting
 
     .NOTES
-        For additional information please see my GitHub wiki page
+        For additional information please contact PlatformBuild@transunion.co.uk
 
     .FUNCTIONALITY
         PUT: scan_engine_pools/{id}/engines/{engineId}
@@ -36,9 +33,7 @@ Function Add-NexposeScanEngineToPool {
     Param (
         [int]$PoolId,
 
-        [int[]]$EngineId,
-
-        [switch]$ReplaceExisting
+        [int[]]$EngineId
     )
 
     Begin {
@@ -50,16 +45,7 @@ Function Add-NexposeScanEngineToPool {
     }
 
     Process {
-        If ($ReplaceExisting.IsPresent) {
-            If ($PSCmdlet.ShouldProcess($PoolId)) {
-                ForEach ($Engine In $($currPool.engines)) {
-                    Invoke-NexposeQuery -UrlFunction "scan_engine_pools/$PoolId/engines/$Engine" -RestMethod Delete
-                }
-            }
-        }
-        Else {
-            $EngineId += $($currPool.engines)
-        }
+        $EngineId += $($currPool.engines)
 
         If ($PSCmdlet.ShouldProcess($PoolId)) {
             ForEach ($Engine In $EngineId) {

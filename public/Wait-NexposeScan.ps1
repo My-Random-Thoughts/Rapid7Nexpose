@@ -22,10 +22,10 @@ Function Wait-NexposeScan {
         Wait-NexposeScan -Id '42' -WaitTimeOut (New-TimeSpan -Hours 2)
 
     .NOTES
-        For additional information please see my GitHub wiki page
+        For additional information please contact PlatformBuild@transunion.co.uk
 
     .FUNCTIONALITY
-        N/A
+        None
 
     .LINK
         https://github.com/My-Random-Thoughts/Rapid7Nexpose

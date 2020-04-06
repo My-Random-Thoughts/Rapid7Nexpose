@@ -26,10 +26,10 @@ Function Connect-NexposeAPI {
         Connect-NexposeAPI -HostName 10.1.2.3 -Credential $creds
 
     .NOTES
-        For additional information please see my GitHub wiki page
+        For additional information please contact PlatformBuild@transunion.co.uk
 
     .FUNCTIONALITY
-        N/A
+        None
 
     .LINK
         https://github.com/My-Random-Thoughts/Rapid7Nexpose
@@ -61,9 +61,11 @@ Function Connect-NexposeAPI {
             [string]$password = (New-Object System.Net.NetworkCredential('Null', $(ConvertTo-SecureString -String $securepw), 'Null')).Password
             [string]$authInfo = ([Convert]::ToBase64String([Text.Encoding]::ASCII.GetBytes(('{0}:{1}' -f $username, $password))))
 
-            Invoke-WebRequest -Uri "https://$($HostName):$($Port)/api/3/" -Method Get `
-                              -Headers @{Authorization = ('Basic {0}' -f $authInfo)} `
-                              -SessionVariable global:NexposeSession
+            $iWebReq = (Invoke-WebRequest -Uri "https://$($HostName):$($Port)/api/3/" -Method Get `
+                -Headers @{Authorization = ('Basic {0}' -f $authInfo)} `
+                -SessionVariable global:NexposeSession `
+                -ErrorAction Stop
+            )
 
             # Add extra header information
             $global:NexposeSession.Headers.Add('HostName', $HostName)
@@ -72,5 +74,7 @@ Function Connect-NexposeAPI {
     }
 
     End {
+        Write-Verbose "Connection Status: $($iWebReq.statusCode) $($iWebReq.statusDescription)"
+        Write-Output $iWebReq
     }
 }

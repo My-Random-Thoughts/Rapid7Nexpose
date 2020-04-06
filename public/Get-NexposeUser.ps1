@@ -37,7 +37,7 @@ Function Get-NexposeUser {
         Get-NexposeUser -Name JoeBlogg
 
     .NOTES
-        For additional information please see my GitHub wiki page
+        For additional information please contact PlatformBuild@transunion.co.uk
 
     .FUNCTIONALITY
         GET: users
@@ -119,10 +119,15 @@ Function Get-NexposeUser {
                         }
                     }
 
+                    $userDetails | Add-Member -Name 'lastLogon' -Value (Get-NexposeUserLastLogon -Id $Id) -MemberType NoteProperty
                     Write-Output $userDetails
                 }
                 Else {
-                    Write-Output @(Invoke-NexposeQuery -UrlFunction 'users' -RestMethod Get)    # Return All
+                    $userDetails = @(Invoke-NexposeQuery -UrlFunction 'users' -RestMethod Get)
+                    ForEach ($user In $userDetails) {
+                        $user | Add-Member -Name 'lastLogon' -Value (Get-NexposeUserLastLogon -Id $($user.id)) -MemberType NoteProperty
+                        Write-Output $user
+                    }
                 }
             }
 

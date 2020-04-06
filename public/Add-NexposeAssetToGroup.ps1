@@ -12,14 +12,11 @@ Function Add-NexposeAssetToGroup {
     .PARAMETER AssetId
         The identifier of the asset
 
-    .PARAMETER ReplaceAll
-        Replace existing values with those given.  If not set, existing values will be added to
-
     .EXAMPLE
         Add-NexposeAssetToGroup -GroupId 2 -AssetId @(12, 24, 48)
 
     .NOTES
-        For additional information please see my GitHub wiki page
+        For additional information please contact PlatformBuild@transunion.co.uk
 
     .FUNCTIONALITY
         GET: asset_groups/{id}
@@ -36,9 +33,7 @@ Function Add-NexposeAssetToGroup {
         [int]$GroupId,
 
         [Parameter(Mandatory = $true)]
-        [string[]]$AssetId,
-
-        [switch]$ReplaceAll
+        [string[]]$AssetId
     )
 
     Begin {
@@ -49,21 +44,10 @@ Function Add-NexposeAssetToGroup {
     }
 
     Process {
-        If ($ReplaceAll.IsPresent) {
-            [int[]]$assetList = @()
-            ForEach ($asset In $AssetId) {
-                $assetList += (ConvertTo-NexposeId -Name $asset -ObjectType 'Asset')
-            }
-            If ($PSCmdlet.ShouldProcess($assetList)) {
-                Write-Output (Invoke-NexposeQuery -UrlFunction "asset_groups/$GroupId/assets" -ApiQuery $assetList -RestMethod Put)
-            }
-        }
-        Else {
-            ForEach ($asset In $AssetId) {
-                If ($PSCmdlet.ShouldProcess($asset)) {
-                    $asset = (ConvertTo-NexposeId -Name $asset -ObjectType 'Asset')
-                    Write-Output (Invoke-NexposeQuery -UrlFunction "asset_groups/$GroupId/assets/$asset" -RestMethod Put)
-                }
+        ForEach ($asset In $AssetId) {
+            If ($PSCmdlet.ShouldProcess($asset)) {
+                $asset = (ConvertTo-NexposeId -Name $asset -ObjectType 'Asset')
+                Write-Output (Invoke-NexposeQuery -UrlFunction "asset_groups/$GroupId/assets/$asset" -RestMethod Put)
             }
         }
     }

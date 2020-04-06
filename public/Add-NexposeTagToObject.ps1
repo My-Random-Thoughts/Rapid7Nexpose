@@ -22,21 +22,19 @@ Function Add-NexposeTagToObject {
         Add-NexposeTagToObject -TagId 3 -ObjectId 2 -ObjectType Site
 
     .NOTES
-        For additional information please see my GitHub wiki page
+        For additional information please contact PlatformBuild@transunion.co.uk
 
     .FUNCTIONALITY
         PUT: tags/{id}/assets/{assetId}
         PUT: tags/{id}/asset_groups/{assetGroupId}
         PUT: tags/{id}/sites/{siteId}
-        PUT: SKIPPED - tags/{id}/assets                  #
-        PUT: SKIPPED - tags/{id}/asset_groups            #
-        PUT: SKIPPED - tags/{id}/sites                   #
-        PUT: SKIPPED - assets/{id}/tags                  #
-        PUT: SKIPPED - assets/{id}/tags/{tagId}          # This is the same as above
-        PUT: SKIPPED - asset_groups/{id}/tags            #
-        PUT: SKIPPED - asset_groups/{id}/tags/{tagId}    # This is the same as above
-        PUT: SKIPPED - sites/{id}/tags                   #
-        PUT: SKIPPED - sites/{id}/tags/{tagId}           # This is the same as above
+        PUT: SKIPPED - assets/{id}/tags/{tagId}
+        PUT: SKIPPED - asset_groups/{id}/tags
+        PUT: SKIPPED - asset_groups/{id}/tags/{tagId}
+        PUT: SKIPPED - sites/{id}/tags
+        PUT: SKIPPED - sites/{id}/tags/{tagId}
+        PUT: SKIPPED - tags/{id}/asset_groups
+        PUT: SKIPPED - tags/{id}/sites
 
     .LINK
         https://github.com/My-Random-Thoughts/Rapid7Nexpose

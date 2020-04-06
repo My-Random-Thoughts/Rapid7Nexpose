@@ -10,10 +10,10 @@ Function Remove-NexposeScanTemplate {
         The identifier of the scan template
 
     .EXAMPLE
-        Remove-NexposeScanTemplate -Id 'abc
+        Remove-NexposeScanTemplate -Id 'abc'
 
     .NOTES
-        For additional information please see my GitHub wiki page
+        For additional information please contact PlatformBuild@transunion.co.uk
 
     .FUNCTIONALITY
         DELETE: scan_templates/{id}

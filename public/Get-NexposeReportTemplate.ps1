@@ -10,10 +10,10 @@ Function Get-NexposeReportTemplate {
         The identifier of the template
 
     .EXAMPLE
-        Get-NexposeReportTemplate -Id 42
+        Get-NexposeReportTemplate -Id 'audit-report'
 
     .NOTES
-        For additional information please see my GitHub wiki page
+        For additional information please contact PlatformBuild@transunion.co.uk
 
     .FUNCTIONALITY
         GET: report_templates
@@ -25,10 +25,10 @@ Function Get-NexposeReportTemplate {
 
     [CmdletBinding()]
     Param (
-        [int]$Id = 0
+        [string]$Id = ''
     )
 
-    If ($Id -gt 0) {
+    If (-not [string]::IsNullOrEmpty($Id)) {
         Write-Output (Invoke-NexposeQuery -UrlFunction "report_templates/$Id" -RestMethod Get)
     }
     Else {

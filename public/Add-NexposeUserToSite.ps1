@@ -19,11 +19,13 @@ Function Add-NexposeUserToSite {
         Add-NexposeUserToSite -UserId 5 -SiteId (23, 'Site B')
 
     .NOTES
-        For additional information please see my GitHub wiki page
+        For additional information please contact PlatformBuild@transunion.co.uk
 
     .FUNCTIONALITY
         PUT: users/{id}/sites/{siteId}
-        PUT: SKIPPED - users/{id}/sites    # Reverse of this function
+        PUT: SKIPPED - users/{id}/sites     # Reverse of this function
+        PUT: SKIPPED - sites/{id}/users     # Duplicate of above
+        POST: SKIPPED - sites/{id}/users    # Duplicate of above
 
     .LINK
         https://github.com/My-Random-Thoughts/Rapid7Nexpose
