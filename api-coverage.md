@@ -13,7 +13,7 @@ This list shows the current API coverage of the module as of 2019-04-08.
           354  Total
 
 
-Get  Put  Post Delete Url                                                                        Command
+    Get  Put  Post Delete Url                                                                        Command
     ---  ---  ---- ------ ---                                                                        -------
               [X]         administration/commands                                                    Invoke-NexposeSystemCommand.ps1 (POST)
     [X]                   administration/info                                                        Get-NexposeSystemInfo.ps1 (GET)
