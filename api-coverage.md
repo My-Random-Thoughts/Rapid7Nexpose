@@ -1,6 +1,6 @@
 # API Coverage
 
-This list shows the current API coverage of the module as of 2019-10-03.
+This list shows the current API coverage of the module as of 2019-04-08.
 
 ---
 
