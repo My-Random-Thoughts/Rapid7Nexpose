@@ -1,7 +1,7 @@
 # Rapid7 Nexpose PowerShell Module
 ## Description
 This module talks to the Rapid 7 Nexpose API v3 to help in managing your installation.
-The API can be located at `https://<DNS Name or IP>:3870/api/3`
+The API can be located at `https://<DNS Name or IP>:3780/api/3`
 
 This module also works with 'insightVM' - They are basically the same product
 
@@ -14,7 +14,7 @@ Download all the files into your PowerShell module path (usually C:\Program File
 ## Basic Usage
 To start using the module, you need to authenticate with your Nexpose installation:
 
-`Connect-NexposeAPI -HostName '<DNS Name or IP>' -Port '3870' -Credential <PSCredential>`
+`Connect-NexposeAPI -HostName '<DNS Name or IP>' -Port '3780' -Credential <PSCredential>`
 
 If you are using a self-signed certificate, you will also need to add `-SkipSSLCheck` to the end of the above command.
 
