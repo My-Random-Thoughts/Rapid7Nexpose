@@ -86,26 +86,8 @@ Function Get-NexposeScanEngine {
         }
     }
 
-    # Get detailed information for "Status"
-    [pscustomobject[]]$cmdObject = (Get-NexposeScanEngineAlternative)
-
     ForEach ($scan In ($engines | Sort-Object -Property id)) {
-        # One of: Active, Pending-Auth, Incompatible, Not-Responding, Unknown
-        [string]$status = ($cmdObject | Where-Object { $_.name -eq $scan.name }).status
-
-        # Check last refreshed date, should be updated evey hour
-        If ($scan.lastRefreshedDate) {
-            [int]$Offset = ((Get-Date) - ($scan.lastRefreshedDate -as [datetime]))
-            If (($Offset -gt $RefreshedOffset) -and ($status -eq 'Active')) {
-                $status = 'Stale'
-            }
-        }
-
-        If ($scan.port -eq '-1') { $status = 'Pool'      }
-        If ($status    -eq   '') { $status = 'Undefined' }
-
         If ((($scan.port -eq '-1') -and ($IncludeEnginePools.IsPresent)) -or ($scan.port -ne '-1')) {
-            [void]($scan | Add-Member -MemberType NoteProperty -Name 'status' -Value $status)
             Write-Output $scan
         }
     }
