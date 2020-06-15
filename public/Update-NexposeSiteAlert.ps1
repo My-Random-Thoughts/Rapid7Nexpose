@@ -208,8 +208,15 @@ Function Update-NexposeSiteAlert {
 
         If ($PSCmdlet.ShouldProcess($SiteId)) {
             [string]$uri = "sites/$SiteId/alerts/$($NotificationType.ToLower())"
-            If ($AlertId -gt 0) { $uri += "/$AlertId" }
-            Write-Output (Invoke-NexposeQuery -UrlFunction $uri -ApiQuery $apiQuery -RestMethod Put)
+            If ($AlertId -gt 0) {
+                Write-Output (Invoke-NexposeQuery -UrlFunction "$uri/$AlertId" -ApiQuery $apiQuery -RestMethod Put)
+            }
+            Else {
+                $alertIds = @((Get-NexposeSiteAlert -SiteId $SiteId -AlertType $NotificationType.ToLower()).Id)
+                ForEach ($id In $alertIds) {
+                    Write-Output (Invoke-NexposeQuery -UrlFunction "$uri/$id" -ApiQuery $apiQuery -RestMethod Put)
+                }
+            }
         }
     }
 
