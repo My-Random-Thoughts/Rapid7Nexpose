@@ -52,9 +52,14 @@ Function Find-NexposeIpTargetSite {
                 }
             }
             Else {
-                [string]$hostName = ([System.Net.Dns]::GetHostByAddress($IpAddress).HostName)
-                If ($hostName -like "$ip*") {
-                    [void]$ReturnedSites.Add($site)
+                Try {
+                    [string]$hostName = ([System.Net.Dns]::GetHostEntry($IpAddress).HostName)
+                    If ($hostName -like "$ip*") {
+                        [void]$ReturnedSites.Add($site)
+                    }
+                }
+                Catch {
+                    Write-Warning -Message $($Error[0].Exception.Message)
                 }
             }
         }
@@ -72,9 +77,14 @@ Function Find-NexposeIpTargetSite {
                 }
             }
             Else {
-                [string]$hostName = ([System.Net.Dns]::GetHostByAddress($IpAddress).HostName)
-                If ($hostName -like "$ip*") {
-                    [void]$ReturnedSites.Remove($site)
+                Try {
+                    [string]$hostName = ([System.Net.Dns]::GetHostEntry($IpAddress).HostName)
+                    If ($hostName -like "$ip*") {
+                        [void]$ReturnedSites.Remove($site)
+                    }
+                }
+                Catch {
+                    Write-Warning -Message $($Error[0].Exception.Message)
                 }
             }
         }
