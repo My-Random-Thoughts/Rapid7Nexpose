@@ -65,7 +65,7 @@ Function Get-NexposeUserLastLogon {
     Process {
         ForEach ($user In ($userList.DynTable.Data.tr)) {
             $xmlId    = $user.ChildNodes[1].InnerText
-            $xmlLogin = $user.ChildNodes[8].InnerText
+            $xmlLogin = $user.ChildNodes[9].InnerText
 
             If (-not $xmlLogin) {
                 Return 'No data returned'
