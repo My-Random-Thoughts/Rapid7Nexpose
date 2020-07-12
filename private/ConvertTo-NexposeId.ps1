@@ -19,7 +19,7 @@ Function ConvertTo-NexposeId {
         ConvertTo-NexposeId -Name 'tag_1' -ObjectType 'Tag'
 
     .NOTES
-        For additonal information please contact PlatformBuild@callcreditgroup.com
+        For additional information please see my GitHub wiki page
 
     .LINK
         https://github.com/My-Random-Thoughts/Rapid7Nexpose
