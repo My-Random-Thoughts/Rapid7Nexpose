@@ -36,6 +36,7 @@ Function Connect-NexposeAPI {
 #>
 
     [CmdletBinding(SupportsShouldProcess)]
+    [System.Diagnostics.CodeAnalysis.SuppressMessageAttribute('PSAvoidGlobalVars', '', Scope = 'Function')]
     Param (
         [Parameter(Mandatory = $true)]
         [string]$HostName,
@@ -49,8 +50,13 @@ Function Connect-NexposeAPI {
     )
 
     Begin {
+        $invokeWebRequest = @{
+            ErrorAction = 'Stop'
+            SkipCertificateCheck = $($SkipSSLCheck.IsPresent)
+        }
+
         If ($SkipSSLCheck.IsPresent) {
-            Skip-SSLError
+            If ($PSVersionTable.PSVersion.Major -le 5) { Skip-SSLError }
         }
     }
 
@@ -61,20 +67,24 @@ Function Connect-NexposeAPI {
             [string]$password = (New-Object System.Net.NetworkCredential('Null', $(ConvertTo-SecureString -String $securepw), 'Null')).Password
             [string]$authInfo = ([Convert]::ToBase64String([Text.Encoding]::ASCII.GetBytes(('{0}:{1}' -f $username, $password))))
 
-            $iWebReq = (Invoke-WebRequest -Uri "https://$($HostName):$($Port)/api/3/" -Method Get `
-                -Headers @{Authorization = ('Basic {0}' -f $authInfo)} `
-                -SessionVariable global:NexposeSession `
-                -ErrorAction Stop
-            )
+            $invokeWebRequest += @{
+                Uri     = "https://$($HostName):$($Port)/api/3/"
+                Method  = 'Get'
+                Headers = @{Authorization = ('Basic {0}' -f $authInfo)}
+            }
+
+            $iWebReq = (Invoke-WebRequest @invokeWebRequest -SessionVariable global:NexposeSession )
 
             # Add extra header information
-            $global:NexposeSession.Headers.Add('HostName', $HostName)
-            $global:NexposeSession.Headers.Add('Port',     $Port    )
+            $global:NexposeSession.Headers.Add('HostName',   $HostName               )
+            $global:NexposeSession.Headers.Add('Port',       $Port                   )
+            $global:NexposeSession.Headers.Add('SkipSSL',  $($SkipSSLCheck.IsPresent))
+
+            Write-Verbose "Connection Status: $($iWebReq.statusCode) $($iWebReq.statusDescription)"
+            Return $iWebReq
         }
     }
 
     End {
-        Write-Verbose "Connection Status: $($iWebReq.statusCode) $($iWebReq.statusDescription)"
-        Write-Output $iWebReq
     }
 }

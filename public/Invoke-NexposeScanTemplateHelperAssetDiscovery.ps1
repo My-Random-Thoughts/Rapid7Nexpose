@@ -214,7 +214,7 @@ Function Invoke-NexposeScanTemplateHelperAssetDiscovery {
                 }
             }
             service = @{
-                serviceNameFile = $ServiceServiceNameFile
+                serviceNameFile = $ServiceNameFile
                 tcp = @{
                     additionalPorts = $ServiceTcpAdditionalPorts
                     excludedPorts = $ServiceTcpExcludedPorts

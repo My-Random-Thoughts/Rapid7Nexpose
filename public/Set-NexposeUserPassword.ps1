@@ -27,6 +27,7 @@ Function Set-NexposeUserPassword {
 #>
 
     [CmdletBinding(SupportsShouldProcess)]
+    [System.Diagnostics.CodeAnalysis.SuppressMessageAttribute('PSAvoidGlobalVars', '', Scope = 'Function')]
     Param (
         [Parameter(Mandatory = $true)]
         [pscredential]$NewPassword,

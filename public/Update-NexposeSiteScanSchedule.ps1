@@ -90,6 +90,7 @@ Function Update-NexposeSiteScanSchedule {
 
         [string]$Frequency,
 
+        [ValidatePattern('^((?:[1-9][0-9]?|[1-2][0-9][0-9]|3[0-5][0-9]|36[0-4])D)? ?((?:1?[0-9]?|2[0-3])H)? ?((?:[1-4]?[0-9]?|5[0-9])M)?$')]
         [string]$Duration,
 
         [ValidateSet('restart-scan','resume-scan')]
@@ -111,20 +112,11 @@ Function Update-NexposeSiteScanSchedule {
         [string]$ScanEngine   = $($PSBoundParameters.ScanEngine  )
         If ([string]::IsNullOrEmpty($ScanTemplate) -eq $true) { $ScanTemplate = 'discovery' }
 
-        # Verify the duration input
-        [string]$regexDuration = '^((?:[1-9][0-9]?|[1-2][0-9][0-9]|3[0-5][0-9]|36[0-4])D)? ?((?:1?[0-9]?|2[0-3])H)? ?((?:[1-4]?[0-9]?|5[0-9])M)?$'
-        [System.Text.RegularExpressions.Match]$matchDuration = ([regex]::Match($Duration.ToLower(), $regexDuration, 'IgnoreCase'))
-
         $matchInterval = (Test-FrequencyString -Frequency $Frequency)
         If ($matchInterval.Success -eq $false) { Throw 'Invalid Frequency entered, please see the examples for more information.' }
     }
 
     Process {
-        [string]$every       = ''
-        [string]$dayOfWeek   = ''
-        [int]   $interval    = 0
-        [int]   $weekOfMonth = 0
-
         $apiQuery = @{
             enabled        = ($Enabled.IsPresent)
             scanName       =  $Name

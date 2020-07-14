@@ -29,29 +29,22 @@ Function Get-NexposeUserLastLogon {
 #>
 
     [CmdletBinding(DefaultParameterSetName = 'byId')]
+    [OutputType([string])]
     Param (
         [Parameter(Mandatory = $true, ParameterSetName = 'byId')]
-        [int]$Id = 0,
+        [int]$Id,
 
         [Parameter(Mandatory = $true, ParameterSetName = 'byName')]
         [string]$Name
     )
 
     Begin {
-        If ((Test-Path -Path variable:global:NexposeSession) -eq $false) {
-            Throw "A valid session token has not been created, please use 'Connect-NexposeAPI' to create one"
-        }
+    }
 
-        # Using interal call as API does not support this
-        [string]$HostName  = $($global:NexposeSession.Headers['HostName'])
-        [int]   $Port      = $($global:NexposeSession.Headers['Port'])
-        [hashtable]$iRestM = @{
-            Uri = ('https://{0}:{1}/data/admin/users?printDocType=0&tableID=UserAdminSynopsis' -f $HostName, $Port)
-            Method = 'GET'
-            WebSession = $global:NexposeSession
-        }
+    Process {
+        # Using interal call as the API does not support this
+        $userList = @(Invoke-NexposeRestMethod -Uri '/data/admin/users?printDocType=0&tableID=UserAdminSynopsis' -Method 'Get' -TimeOut 300)
 
-        $userList = @(Invoke-RestMethod @iRestM -Verbose:$false -TimeoutSec 300 -ErrorAction Stop)
         If (-not $userList) {
             Throw 'Unable to retreive user list'
         }
@@ -60,9 +53,26 @@ Function Get-NexposeUserLastLogon {
             $Name = (ConvertTo-NexposeId -Name $Name -ObjectType 'User')
             If ([string]::IsNullOrEmpty($Name) -eq $false) { $Id = $Name }
         }
-    }
 
-    Process {
+<#
+    Column  0 = "Authentication Module"
+    Column  1 = "User ID"                <--
+    Column  2 = "Authenticator"
+    Column  3 = "User Name"
+    Column  4 = "Full Name"
+    Column  5 = "Email"
+    Column  6 = "Administrator"
+    Column  7 = "User Role"
+    Column  8 = "SSO Enabled"
+    Column  9 = "Last Logon"             <---
+    Column 10 = "Expiration Time"
+    Column 11 = "Disabled"
+    Column 12 = "Locked"
+    Column 13 = "Site Count"
+    Column 14 = "Group Count"
+    Column 15 = "Silo Count"
+#>
+
         ForEach ($user In ($userList.DynTable.Data.tr)) {
             $xmlId    = $user.ChildNodes[1].InnerText
             $xmlLogin = $user.ChildNodes[9].InnerText

@@ -99,7 +99,9 @@ Function Get-NexposePolicyRule {
         }
 
         'byDisabled' {
-            Write-Output (Invoke-NexposeQuery -UrlFunction "policies/$PolicyId/rules/disabled" -RestMethod Get)
+            If ($ShowDisabledRules) {
+                Write-Output (Invoke-NexposeQuery -UrlFunction "policies/$PolicyId/rules/disabled" -RestMethod Get)
+            }
         }
     }
 }

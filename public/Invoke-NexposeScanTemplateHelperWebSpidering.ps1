@@ -107,7 +107,7 @@ Function Invoke-NexposeScanTemplateHelperWebSpidering {
         [ValidateRange(0, 999)]
         [int]$PerformanceThreadsPerServer = 3,
 
-        [string[]]$PerformanceHttpDaemonsToSkip = ('Virata-EmWeb','Allegro-Software-RomPager','JetDirect','HP JetDirect','HP Web Jetadmin','HP-ChaiSOE','HP-ChaiServer','CUPS','DigitalV6-HTTPD','Rapid Logic','Agranat-EmWeb','cisco-IOS','RAC_ONE_HTTP','RMC Webserver','EWS-NIC3','EMWHTTPD','IOS','ESWeb'),
+        [string[]]$PerformanceHttpDaemonsToSkip = @('Virata-EmWeb','Allegro-Software-RomPager','JetDirect','HP JetDirect','HP Web Jetadmin','HP-ChaiSOE','HP-ChaiServer','CUPS','DigitalV6-HTTPD','Rapid Logic','Agranat-EmWeb','cisco-IOS','RAC_ONE_HTTP','RMC Webserver','EWS-NIC3','EMWHTTPD','IOS','ESWeb'),
 
         [ValidateRange(0, 100)]
         [int]$PerformanceMaximumLinkDepth = 6,
@@ -140,7 +140,7 @@ Function Invoke-NexposeScanTemplateHelperWebSpidering {
                 sensitiveField = $PatternsSensitiveField
             }
             performance = @{
-                httpDaemonsToSkip = @('string')
+                httpDaemonsToSkip = $PerformanceHttpDaemonsToSkip
                 maximumDirectoryLevels = $PerformanceMaximumDirectoryLevels
                 maximumForeignHosts = $PerformanceMaximumForeignHosts
                 maximumLinkDepth = $PerformanceMaximumLinkDepth

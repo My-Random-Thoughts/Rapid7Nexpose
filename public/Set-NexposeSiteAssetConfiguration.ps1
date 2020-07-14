@@ -19,10 +19,10 @@ Function Set-NexposeSiteAssetConfiguration {
         List of addresses to be the site's new excluded scan targets. Each address is a string that can represent either a hostname, ipv4 address, ipv4 address range, ipv6 address, or CIDR notation
 
     .PARAMETER IncludedAssetGroup
-        Array of asset group identifiers or names
+        List of asset group identifiers or names
 
     .PARAMETER ExcludedAssetGroup
-        Array of asset group identifiers or names
+        List of asset group identifiers or names
 
     .EXAMPLE
         Set-NexposeSiteAssetConfiguration -Id 23 -IncludedTarget @('1.1.1.1-1.2.255.255', '192.168.1.0/24')

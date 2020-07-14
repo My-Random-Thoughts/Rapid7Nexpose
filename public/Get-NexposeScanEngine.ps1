@@ -21,9 +21,6 @@ Function Get-NexposeScanEngine {
     .PARAMETER IncludeEnginePools
         Switch to include any engine pools.  This is off by default
 
-    .PARAMETER RefreshedOffset
-        The number of hours to show if a scan engine is offline or not.  Default value is 2 hours
-
     .EXAMPLE
         Get-NexposeScanEngine -SiteId 5
 
@@ -58,9 +55,7 @@ Function Get-NexposeScanEngine {
         [Parameter(Mandatory = $true, ParameterSetName = 'bySite')]
         [string]$SiteId,
 
-        [switch]$IncludeEnginePools,
-
-        [int]$RefreshedOffset = 2
+        [switch]$IncludeEnginePools
     )
 
     Switch ($PSCmdlet.ParameterSetName) {

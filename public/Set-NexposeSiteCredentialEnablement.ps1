@@ -53,7 +53,8 @@ Function Set-NexposeSiteCredentialEnablement {
     )
 
     Begin {
-        [string]$Setting = ($Enabled.IsPresent).ToString()
+        If ($PSCmdlet.ParameterSetName -eq 'byEnabled' ) { [string]$Setting = 'True'  }
+        If ($PSCmdlet.ParameterSetName -eq 'byDisabled') { [string]$Setting = 'False' }
     }
 
     Process {

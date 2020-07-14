@@ -70,7 +70,7 @@ Function Get-NexposePolicyOverride {
         }
 
         'byAsset' {
-            Write-Output (Invoke-NexposeQuery -UrlFunction "asset/$Id/policy_overrides" -RestMethod Get)
+            Write-Output (Invoke-NexposeQuery -UrlFunction "asset/$AssetId/policy_overrides" -RestMethod Get)
         }
 
         'byOther' {

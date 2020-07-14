@@ -12,11 +12,17 @@ Function Remove-NexposeSiteAssetConfiguration {
     .PARAMETER Name
         The name of the site
 
-    .PARAMETER ConfigurationItemType
-        The type of configuration item to remove
+    .PARAMETER IncludedTarget
+        List of addresses to be the site's new included scan targets. Each address is a string that can represent either a hostname, ipv4 address, ipv4 address range, ipv6 address, or CIDR notation
 
-    .PARAMETER ConfigurationItem
-        The identifier of the target or asset group.  For targets, this much match exactly a current entry
+    .PARAMETER ExcludedTarget
+        List of addresses to be the site's new excluded scan targets. Each address is a string that can represent either a hostname, ipv4 address, ipv4 address range, ipv6 address, or CIDR notation
+
+    .PARAMETER IncludedAssetGroup
+        List of asset group identifiers or names
+
+    .PARAMETER ExcludedAssetGroup
+        List of asset group identifiers or names
 
     .EXAMPLE
         Remove-NexposeSiteAssetConfiguration -Id 23 -IncludedTargets '1.2.3.4'
@@ -28,10 +34,10 @@ Function Remove-NexposeSiteAssetConfiguration {
         For additional information please see my GitHub wiki page
 
     .FUNCTIONALITY
+        DELETE: sites/{id}/included_targets
+        DELETE: sites/{id}/excluded_targets
         DELETE: sites/{id}/included_asset_groups
-        DELETE: sites/{id}/included_asset_groups/{assetGroupId}
         DELETE: sites/{id}/excluded_asset_groups
-        DELETE: sites/{id}/excluded_asset_groups/{assetGroupId}
 
     .LINK
         https://github.com/My-Random-Thoughts/Rapid7Nexpose
@@ -45,63 +51,56 @@ Function Remove-NexposeSiteAssetConfiguration {
         [Parameter(Mandatory = $true, ParameterSetName = 'byName')]
         [string]$Name,
 
-        [Parameter(Mandatory = $true)]
-#        [ValidateSet('IncludedTargets','ExcludedTargets','IncludedAssetGroups','ExcludedAssetGroups')]
-        [ValidateSet('IncludedAssetGroups','ExcludedAssetGroups')]
-        [string]$ConfigurationItemType,
+        [string[]]$IncludedTarget,
 
-        [string]$ConfigurationItem = '0'
+        [string[]]$ExcludedTarget,
+
+        [string[]]$IncludedAssetGroup,
+
+        [string[]]$ExcludedAssetGroup
     )
 
     Begin {
-        If ($ConfigurationItemType.EndsWith('AssetGroups')) {
-            $ConfigurationItem = (ConvertTo-NexposeId -Name $ConfigurationItem -ObjectType AssetGroup)
-        }
     }
 
     Process {
         Switch ($PSCmdlet.ParameterSetName) {
             'byName' {
                 [int]$id = (ConvertTo-NexposeId -Name $Name -ObjectType Site)
-                Write-Output (Remove-NexposeSiteAssetConfiguration -Id $id -ConfigurationItemType $ConfigurationItemType -ConfigurationItem $ConfigurationItem)
+                Write-Output (Remove-NexposeSiteAssetConfiguration -Id $id `
+                    -IncludedTarget $IncludedTarget `
+                    -ExcludedTarget $ExcludedTarget `
+                    -IncludedAssetGroup $IncludedAssetGroup `
+                    -ExcludedAssetGroup $ExcludedAssetGroup
+                )
             }
 
             'byId' {
-                Switch ($ConfigurationItemType) {
-#                    'IncludedTargets' {
-#                        # TODO: Simple search/replace process, could be better
-#                        [string[]]$currentValue = (Get-NexposeSiteAssetConfiguration -Id $Id).IncludedTargets
-#                        $currentValue = $currentValue.Replace($ConfigurationItem, '')
-#                        Set-NexposeSiteAssetConfiguration -Id $Id -IncludedTarget $currentValue
-#                    }
-#
-#                    'ExcludedTargets' {
-#                        # TODO: Simple search/replace process, could be better
-#                        [string[]]$currentValue = (Get-NexposeSiteAssetConfiguration -Id $Id).ExcludedTargets
-#                        $currentValue = $currentValue.Replace($ConfigurationItem, '')
-#                        Set-NexposeSiteAssetConfiguration -Id $Id -ExcludedTargets $currentValue
-#                    }
-#
-                    'IncludedAssetGroups' {
-                        If ($PSCmdlet.ShouldProcess($ConfigurationItem)) {
-                            If ($ConfigurationItem -eq '0') {
-                                Write-Output (Invoke-NexposeQuery -UrlFunction "sites/$Id/included_asset_groups" -RestMethod Delete)
-                            }
-                            Else {
-                                Write-Output (Invoke-NexposeQuery -UrlFunction "sites/$Id/included_asset_groups/$ConfigurationItem" -RestMethod Delete)
-                            }
-                        }
+                If ([string]::IsNullOrEmpty($IncludedTarget) -eq $false) {
+                    If ($PSCmdlet.ShouldProcess($IncludedTarget)) {
+                        If ($IncludedTarget.Count -eq 1) { $IncludedTarget += '' }
+                        Write-Output (Invoke-NexposeQuery -UrlFunction "sites/$Id/included_targets" -RestMethod Delete -ApiQuery $IncludedTarget)
                     }
+                }
 
-                    'ExcludedAssetGroups' {
-                        If ($PSCmdlet.ShouldProcess($ConfigurationItem)) {
-                            If ($ConfigurationItem -eq '0') {
-                                Write-Output (Invoke-NexposeQuery -UrlFunction "sites/$Id/excluded_asset_groups" -RestMethod Delete)
-                            }
-                            Else {
-                                Write-Output (Invoke-NexposeQuery -UrlFunction "sites/$Id/excluded_asset_groups/$ConfigurationItem" -RestMethod Delete)
-                            }
-                        }
+                If ([string]::IsNullOrEmpty($ExcludedTarget) -eq $false) {
+                    If ($PSCmdlet.ShouldProcess($ExcludedTarget)) {
+                        If ($ExcludedTarget.Count -eq 1) { $ExcludedTarget += '' }
+                        Write-Output (Invoke-NexposeQuery -UrlFunction "sites/$Id/excluded_targets" -RestMethod Delete -ApiQuery $ExcludedTarget)
+                    }
+                }
+
+                If ([string]::IsNullOrEmpty($IncludedAssetGroup) -eq $false) {
+                    If ($PSCmdlet.ShouldProcess($IncludedAssetGroup)) {
+                        If ($IncludedAssetGroup.Count -eq 1) { $IncludedAssetGroup += '' }
+                        Write-Output (Invoke-NexposeQuery -UrlFunction "sites/$Id/included_asset_groups" -RestMethod Delete -ApiQuery $IncludedAssetGroup)
+                    }
+                }
+
+                If ([string]::IsNullOrEmpty($ExcludedAssetGroup) -eq $false) {
+                    If ($PSCmdlet.ShouldProcess($ExcludedAssetGroup)) {
+                        If ($ExcludedAssetGroup.Count -eq 1) { $ExcludedAssetGroup += '' }
+                        Write-Output (Invoke-NexposeQuery -UrlFunction "sites/$Id/excluded_asset_groups" -RestMethod Delete -ApiQuery $ExcludedAssetGroup)
                     }
                 }
             }

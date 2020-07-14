@@ -36,6 +36,9 @@ Function New-NexposeScanTemplate {
     .PARAMETER WebSpidering
         Hashtable object of properties for the web spider settings used during a scan.  If this option is used, Vulnerabilities must also be used.  See the helper function for more information
 
+    .EXAMPLE
+        New-NexposeScanTemplate
+
     .NOTES
         For additional information please see my GitHub wiki page
 
@@ -61,7 +64,7 @@ Function New-NexposeScanTemplate {
         [int]$MaxParallelAssets = 10,
 
         [int]$MaxScanProcesses = 10,
-        
+
         [Parameter(Mandatory = $true)]
         [hashtable]$Discovery,
 

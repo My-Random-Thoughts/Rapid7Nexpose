@@ -38,27 +38,21 @@ Function Set-NexposeLicense {
     )
 
     Begin {
-        If ((Test-Path -Path variable:global:NexposeSession) -eq $false) {
-            Throw "A valid session token has not been created, please use 'Connect-NexposeAPI' to create one"
-        }
-
         If (($PSCmdlet.ParameterSetName) -eq 'byFile') {
             If ((Test-Path -Path $FilePath) -eq $false) {
                 Throw 'Invalid file specified, please make sure it exists'
             }
         }
+
+        [string]$body    = ''
+        [string]$guid    = (([guid]::NewGuid().ToString()).Split('-')[0])
+        [string]$Content = "multipart/form-data; boundary=$guid"
     }
 
     Process {
-        [string]$Host = $($global:NexposeSession.Headers['HostName'])
-        [int]   $Port = $($global:NexposeSession.Headers['Port'])
-        [string]$URI  = ('https://{0}:{1}/api/3/administration/license' -f $Host, $Port)
-        [string]$guid = (([guid]::NewGuid().ToString()).Split('-')[0])
-        [string]$body = ''
-
         Switch ($PSCmdlet.ParameterSetName) {
             'byKey' {
-                $URI += "?key=$Key"
+                $Uri += "?key=$Key"
             }
 
             'byFile' {
@@ -79,7 +73,7 @@ Function Set-NexposeLicense {
 
         Try {
             If ($PSCmdlet.ShouldProcess("$Key$FilePath")) {    # Timeout of 10 minutes, as it checks for updates as part of the licence update.
-                 Write-Output (Invoke-RestMethod -Method Post -Uri $URI -WebSession $global:NexposeSession -ContentType "multipart/form-data; boundary=$guid" -Body $body -TimeoutSec 600)
+                Write-Output (Invoke-NexposeRestMethod -Uri '/api/3/administration/license' -Method 'Post' -ContentType $Content -TimeOut 600 -Body $body)
             }
         }
         Catch {

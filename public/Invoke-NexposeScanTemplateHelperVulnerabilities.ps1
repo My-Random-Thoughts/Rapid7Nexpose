@@ -70,6 +70,7 @@ Function Invoke-NexposeScanTemplateHelperVulnerabilities {
         https://github.com/My-Random-Thoughts/Rapid7Nexpose
 #>
 
+    [System.Diagnostics.CodeAnalysis.SuppressMessageAttribute('PSAvoidUsingPlainTextForPassword', '', Scope = 'Function')]
     Param (
     # VULNERABILITIES
         [switch]$ChecksUnsafe,

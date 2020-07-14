@@ -47,20 +47,16 @@ Function Export-NexposeReport {
     )
 
     Begin {
-        If ((Test-Path -Path variable:global:NexposeSession) -eq $false) {
-            Throw "A valid session token has not been created, please use 'Connect-NexposeAPI' to create one"
+        If ($Latest.IsPresent) {
+            [string]$HId = 'latest'
+        } Else {
+            [string]$HId = $HistoryId
         }
     }
 
     Process {
-        If ($Latest.IsPresent) { [string]$HId = 'latest' } Else { [string]$HId = $HistoryId }
-
-        [string]$Host = $($global:NexposeSession.Headers['HostName'])
-        [int]   $Port = $($global:NexposeSession.Headers['Port'])
-        [string]$URI  = ('https://{0}:{1}/api/3/{2}' -f $Host, $Port, "reports/$Id/history/$HId/output")
-
         Try {
-            [void](Invoke-RestMethod -Uri $URI -Method Get -WebSession $global:NexposeSession -OutFile $SaveAs)
+            [void](Invoke-NexposeRestMethod -Uri "/api/3/reports/$Id/history/$HId/output" -Method 'Get' -OutFile $SaveAs)
             Write-Output $SaveAs
         }
         Catch {
