@@ -6,7 +6,7 @@ Function Test-FrequencyString {
     .DESCRIPTION
         Tests a natural language text input for time intervals.  This returns a regex match object with the results, $false boolean value
 
-    .PARAMETER InputInterval
+    .PARAMETER Frequency
         Natural language text of the interval to test
 
     .EXAMPLE

@@ -1,10 +1,23 @@
 Function Skip-SSLError {
 <#
     .SYNOPSIS
-        Allows the bypassing of invalid SSL certificates,
-        useful for self-signed ones.
+        Allows the bypassing of invalid SSL certificates, useful for self-signed ones.
+
+    .DESCRIPTION
+        Allows the bypassing of invalid SSL certificates, useful for self-signed ones.
+
+    .EXAMPLE
+        Skip-SSLError
+
+    .NOTES
+        For additional information please see my GitHub wiki page
+
+    .LINK
+        https://github.com/My-Random-Thoughts/Rapid7Nexpose
+#>
 #>
 
+If ($PSVersionTable.PSVersion.Major -le 5) {
     Add-Type @'
         using System.Net;
         using System.Security.Cryptography.X509Certificates;
@@ -17,4 +30,8 @@ Function Skip-SSLError {
         }
 '@
     [System.Net.ServicePointManager]::CertificatePolicy = New-Object -TypeName 'TrustAllCertsPolicy'
+    }
+    Else {
+        Write-Verbose -Message 'This function does not work with PowerShell Core!'
+    }
 }

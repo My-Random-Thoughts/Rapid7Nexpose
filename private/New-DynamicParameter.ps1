@@ -13,6 +13,7 @@ Function New-DynamicParameter {
            One of the examples illustrates a generic method for populating appropriate variables from dynamic parameters
            Alternatively, manually reference $PSBoundParameters for the dynamic parameter value
     .NOTES
+        For additional information please see my GitHub wiki page
         Credit to http://jrich523.wordpress.com/2013/05/30/powershell-simple-way-to-add-dynamic-parameters-to-advanced-function/
             Added logic to make option set optional
             Added logic to add RuntimeDefinedParameter to existing Dictionary
@@ -40,6 +41,8 @@ Function New-DynamicParameter {
         See final example for illustration
 
     .EXAMPLE
+        New-DynamicParameter
+
         Function Show-Free {
             [CmdletBinding()]
             Param ()
@@ -62,6 +65,8 @@ Function New-DynamicParameter {
         # The Drive parameter ValidateSet populates with all available volumes on the computer for handy tab completion / intellisense
 
     .EXAMPLE
+        New-DynamicParameter
+
         # I found many cases where I needed to add more than one dynamic parameter
         # The Dictionary parameter lets you specify an existing dictionary
         # The block of code in the Begin block loops through bound parameters and defines variables if they don't exist

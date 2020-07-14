@@ -29,6 +29,7 @@ Function Convert-FrequencyString {
 #>
 
     [CmdletBinding()]
+    [OutputType([hashtable], $null)]
     Param (
         [string]$Frequency
     )

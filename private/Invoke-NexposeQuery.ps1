@@ -56,15 +56,14 @@ Function Invoke-NexposeQuery {
         If ((Test-Path -Path variable:global:NexposeSession) -eq $false) {
             Throw "A valid session token has not been created, please use 'Connect-NexposeAPI' to create one"
         }
-    }
 
-    Process {
-        [string]$HostName = $($global:NexposeSession.Headers['HostName'])
-        [int]   $Port     = $($global:NexposeSession.Headers['Port'])
-        [string]$ApiUri   = ('https://{0}:{1}/api/3/{2}' -f $HostName, $Port, $UrlFunction)
+        [hashtable]$iRestM = @{
+            Uri        = "/api/3/$UrlFunction"
+            Method     = $RestMethod
+        }
 
-        If ($UrlFunction -eq 'asset/scan') { $ApiUri = $ApiUri.Replace('/api/3/', '/api/2.1/') }    # Hack for 'Start-NexposeAssetScan'
-        If ($UrlFunction -eq 'assets/search') {    # Hack for stupid naming convention from Rapid7
+        If ($UrlFunction -eq 'asset/scan') { $Uri = $Uri.Replace('/api/3/', '/api/2.1/') }    # Hack for 'Start-NexposeAssetScan'
+        If ($UrlFunction -eq 'assets/search') {                                               # Hack for stupid naming convention from Rapid7
             ForEach ($filter In $($ApiQuery.Filters)) {
                 If ($filter.field -eq 'vulnerability-exposures') {
                     Switch ($filter.values) {
@@ -75,36 +74,35 @@ Function Invoke-NexposeQuery {
                 }
             }
         }
+    }
 
-        [hashtable]$iRestM = @{
-            Uri        = $ApiUri
-            Method     = $RestMethod
-            WebSession = $global:NexposeSession
-        }
+    Process {
+        [boolean]$getDelete    = $false
+        [string] $ApiQueryJson = ''
 
         # Force retreving the maximum number of entries (POST comes from Get-NexposeAsset search)
-        If (($RestMethod -eq 'GET') -or ($RestMethod -eq 'POST')) { $iRestM.Uri += '?size=100' }
+        If (($RestMethod -eq 'Get') -or ($RestMethod -eq 'Post'  )) { $iRestM.Uri += '?size=100' }
+        If (($RestMethod -eq 'Get') -or ($RestMethod -eq 'Delete')) { $getDelete   =  $true      }
 
-        If (($RestMethod -eq 'GET') -or ($RestMethod -eq 'DELETE')) {
-            If ([string]::IsNullOrEmpty($ApiQuery) -eq $false) {
-                $ApiQuery.GetEnumerator() | ForEach-Object -Process {
-                    $iRestM.Uri += "&$($_.Key.ToString())=$($_.Value.ToString())"
-                }
+        If ($ApiQuery -is [hashtable]) {
+            If ($getDelete) {
+                $ApiQuery.GetEnumerator() | ForEach-Object -Process { $iRestM.Uri += "&$($_.Key.ToString())=$($_.Value.ToString())" }
+            }
+            Else {
+                $ApiQueryJson = (ConvertTo-Json -InputObject $ApiQuery -Depth 100)
             }
         }
-        Else {
-            [string]$ApiQueryJson = $ApiQuery    # Start as plain text, before
-            If ($ApiQuery -is [hashtable]) {     # converting to JSON only if required
-                [string]$ApiQueryJson = (ConvertTo-Json -InputObject $ApiQuery -Depth 100)
-            }
+        ElseIf ($ApiQuery -is [array]    ) { $ApiQueryJson = (ConvertTo-Json -InputObject $ApiQuery -Depth 100) }
+        ElseIf ($ApiQuery -is [string]   ) { $ApiQueryJson = $ApiQuery }
+        Else   {}    # Do nothing
 
+        If (-not [string]::IsNullOrEmpty($ApiQueryJson)) {
             $iRestM += @{
                 ContentType = 'application/json'
                 Body        =  $ApiQueryJson
             }
-
             # Add page number to URL for "Get-NexposeAsset" search function
-            If ($RestMethod -eq 'POST') {
+            If ($RestMethod -eq 'Post') {
                 [int]$currPage = ([regex]::Match($iRestM.Uri, '(?:&page=)([0-9]{1,})(?:&)').Groups[1].Value)
                 If ($currPage -eq 0) { $iRestM.Uri += '&page=0' }
             }
@@ -113,7 +111,7 @@ Function Invoke-NexposeQuery {
         Try {
             Write-Verbose "Executing API method `"$($RestMethod.ToString().ToUpper())`" against `"$($iRestM.Uri)`""
             If ($ApiQuery) { Write-Verbose "ApiQuery:`n$($ApiQuery | ConvertTo-Json -Depth 100)" }
-            $Output = (Invoke-RestMethod @iRestM -Verbose:$false -TimeoutSec 300 -ErrorAction Stop)
+            $Output = (Invoke-NexposeRestMethod @iRestM -TimeOut 300)
 
             If ([string]::IsNullOrEmpty($Output) -eq $true) {
                 Return $null
@@ -165,7 +163,7 @@ Function Invoke-NexposeQuery {
                         $iRestM.Uri = $iRestM.Uri.Replace("&page=$($_ - 1)", "&page=$_")
                     }
 
-                    $Output = ((Invoke-RestMethod @iRestM -Verbose:$false -TimeoutSec 300 -ErrorAction Stop).resources)
+                    $Output = ((Invoke-NexposeRestMethod @iRestM -Verbose:$false -TimeOut 300).resources)
                     If (-not $IncludeLinks.IsPresent) { $Output = (Remove-NexposeLink -InputObject $Output) }
                     Write-Output $Output
                 }
