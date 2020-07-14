@@ -36,7 +36,7 @@ Function Invoke-NexposeSystemCommand {
 
     Process {
         If ($PSCmdlet.ShouldProcess($Command)) {
-            Write-Output ((Invoke-NexposeQuery -UrlFunction 'administration/commands' -ApiQuery $($Command.ToLower()) -RestMethod Post).output)
+            Write-Output ((Invoke-NexposeQuery -UrlFunction 'administration/commands' -ApiQuery $Command -RestMethod Post).output)
         }
     }
 
