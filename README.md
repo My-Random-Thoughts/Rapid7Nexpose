@@ -21,6 +21,10 @@ If you are using a self-signed certificate, you will also need to add `-SkipSSLC
 Once connected, you can start using any of the other commands.
 For example, to list all sites in your environment, use `Get-NexposeSite`
 
+### TLS Security
+You may find that you can't connect to the API with and error message similar to `Invoke-WebRequest : The underlying connection was closed: An unexpected error occurred on a receive.`.  This is a known issue and can be fixed by adding `[Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12` in your scripts or PowerShell Profile should help.  Have a look at https://stackoverflow.com/questions/36265534/invoke-webrequest-ssl-fails for more information.
+
+
 ## Comment Based Help
 Every command has its own comment based help, so there should be no issues with getting information for the commands.
 Most of the help comes from the API itself, so blame them for mistakes  :)
