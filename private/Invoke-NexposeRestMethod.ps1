@@ -63,10 +63,15 @@ Function Invoke-NexposeRestMethod {
             Uri                  = ("https://{0}:{1}$Uri" -f $HostName, $Port)
             Method               =   $Method
             WebSession           =   $global:NexposeSession
-            SkipCertificateCheck = $($global:NexposeSession.Headers['SkipSSL' ] -as [boolean])
             TimeOut              =   $TimeOut
             UseBasicParsing      =   $true
             ErrorAction          =  'Stop'
+        }
+
+        If ($PSVersionTable.PSVersion.Major -gt 5) {
+            $invokeRestMethod += @{
+                SkipCertificateCheck = $($global:NexposeSession.Headers['SkipSSL' ] -as [boolean])
+            }
         }
     }
 
