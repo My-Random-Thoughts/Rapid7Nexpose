@@ -52,11 +52,15 @@ Function Connect-NexposeAPI {
     Begin {
         $invokeWebRequest = @{
             ErrorAction = 'Stop'
-            SkipCertificateCheck = $($SkipSSLCheck.IsPresent)
         }
 
         If ($SkipSSLCheck.IsPresent) {
-            If ($PSVersionTable.PSVersion.Major -le 5) { Skip-SSLError }
+            If ($PSVersionTable.PSVersion.Major -le 5) {
+                [void](Skip-SSLError)
+            }
+            Else {
+                $invokeWebRequest += @{ SkipCertificateCheck = $($SkipSSLCheck.IsPresent) }
+            }
         }
     }
 
