@@ -88,9 +88,9 @@ Function Update-NexposeSiteAlert {
         PUT: sites/{id}/alerts/smtp
         PUT: sites/{id}/alerts/smtp/{alertId}
         PUT: sites/{id}/alerts/snmp
-        PUT: sites/{id}/alerts/snmp/{alertId}
-        PUT: sites/{id}/alerts/syslog
-        PUT: sites/{id}/alerts/syslog/{alertId}
+        SKIPPED: sites/{id}/alerts/snmp/{alertId}      # Important note in the API:
+        SKIPPED: sites/{id}/alerts/syslog              #    "Alerts defined in the site that are omitted from this request will be deleted from the site"
+        SKIPPED: sites/{id}/alerts/syslog/{alertId}    # This could remove all alerts for a site, so I am skipping them.
 
     .LINK
         https://github.com/My-Random-Thoughts/Rapid7Nexpose
@@ -101,7 +101,8 @@ Function Update-NexposeSiteAlert {
         [Parameter(Mandatory = $true)]
         [int]$SiteId,
 
-        [int]$AlertId = -1,
+        [Parameter(Mandatory = $true)]
+        [int]$AlertId,
 
         [switch]$Enabled,
 
@@ -208,15 +209,7 @@ Function Update-NexposeSiteAlert {
 
         If ($PSCmdlet.ShouldProcess($SiteId)) {
             [string]$uri = "sites/$SiteId/alerts/$($NotificationType.ToLower())"
-            If ($AlertId -gt 0) {
-                Write-Output (Invoke-NexposeQuery -UrlFunction "$uri/$AlertId" -ApiQuery $apiQuery -RestMethod Put)
-            }
-            Else {
-                $alertIds = @((Get-NexposeSiteAlert -SiteId $SiteId -AlertType $NotificationType.ToLower()).Id)
-                ForEach ($id In $alertIds) {
-                    Write-Output (Invoke-NexposeQuery -UrlFunction "$uri/$id" -ApiQuery $apiQuery -RestMethod Put)
-                }
-            }
+            Write-Output (Invoke-NexposeQuery -UrlFunction "$uri/$AlertId" -ApiQuery $apiQuery -RestMethod Put)
         }
     }
 
