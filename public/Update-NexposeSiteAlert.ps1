@@ -85,12 +85,12 @@ Function Update-NexposeSiteAlert {
         For additional information please see my GitHub wiki page
 
     .FUNCTIONALITY
-        PUT: sites/{id}/alerts/smtp
         PUT: sites/{id}/alerts/smtp/{alertId}
-        PUT: sites/{id}/alerts/snmp
-        SKIPPED: sites/{id}/alerts/snmp/{alertId}      # Important note in the API:
-        SKIPPED: sites/{id}/alerts/syslog              #    "Alerts defined in the site that are omitted from this request will be deleted from the site"
-        SKIPPED: sites/{id}/alerts/syslog/{alertId}    # This could remove all alerts for a site, so I am skipping them.
+        PUT: sites/{id}/alerts/snmp/{alertId}
+        PUT: sites/{id}/alerts/syslog/{alertId}
+        SKIPPED: sites/{id}/alerts/smtp            # Important note in the API:
+        SKIPPED: sites/{id}/alerts/snmp            #   "Alerts defined in the site that are omitted from this request will be deleted from the site"
+        SKIPPED: sites/{id}/alerts/syslog          # This could remove all alerts for a site, so I am skipping them.
 
     .LINK
         https://github.com/My-Random-Thoughts/Rapid7Nexpose
