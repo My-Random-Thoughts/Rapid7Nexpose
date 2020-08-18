@@ -1,9 +1,9 @@
 # Get public and private function definition files.
-$Public  = @( Get-ChildItem -Path $PSScriptRoot\Public\*.ps1  -ErrorAction SilentlyContinue )
-$Private = @( Get-ChildItem -Path $PSScriptRoot\Private\*.ps1 -ErrorAction SilentlyContinue )
+$public  = @( Get-ChildItem -Path $PSScriptRoot\public\*.ps1  -ErrorAction SilentlyContinue )
+$private = @( Get-ChildItem -Path $PSScriptRoot\private\*.ps1 -ErrorAction SilentlyContinue )
 
 # Dot source the files
-ForEach ($import in @($Public + $Private)) {
+ForEach ($import in @($public + $private)) {
     Try {
         # Lightweight alternative to dotsourcing a function script
         . ([ScriptBlock]::Create([System.Io.File]::ReadAllText($import)))
@@ -13,4 +13,4 @@ ForEach ($import in @($Public + $Private)) {
     }
 }
 
-Export-ModuleMember -Function $Public.Basename
+Export-ModuleMember -Function $public.Basename
