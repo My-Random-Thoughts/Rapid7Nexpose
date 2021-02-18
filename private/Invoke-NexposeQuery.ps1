@@ -62,7 +62,7 @@ Function Invoke-NexposeQuery {
             Method     = $RestMethod
         }
 
-        If ($UrlFunction -eq 'asset/scan') { $Uri = $Uri.Replace('/api/3/', '/api/2.1/') }    # Hack for 'Start-NexposeAssetScan'
+        If ($UrlFunction -eq 'asset/scan') { $iRestM.Uri = $iRestM.Uri.Replace('/api/3/', '/api/2.1/') }    # Hack for 'Start-NexposeAssetScan'
         If ($UrlFunction -eq 'assets/search') {                                               # Hack for stupid naming convention from Rapid7
             ForEach ($filter In $($ApiQuery.Filters)) {
                 If ($filter.field -eq 'vulnerability-exposures') {
