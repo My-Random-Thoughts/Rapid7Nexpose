@@ -215,8 +215,8 @@ Function Update-NexposeSharedCredential {
                     Write-Verbose "Adding variable for dynamic parameter '$param' with value '$($PSBoundParameters.$param)'"
                 }
                 New-Variable -Name $param -Value $PSBoundParameters.$param -Visibility Private -WhatIf:$false
-                $accountParameters += $param
             }
+            $accountParameters += $param
         }
 
         # Get current details
