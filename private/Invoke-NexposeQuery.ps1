@@ -110,7 +110,7 @@ Function Invoke-NexposeQuery {
 
         Try {
             Write-Verbose "Executing API method `"$($RestMethod.ToString().ToUpper())`" against `"$($iRestM.Uri)`""
-            If ($ApiQuery) { Write-Verbose "ApiQuery:`n$($ApiQuery | ConvertTo-Json -Depth 100)" }
+            If ($ApiQuery) { Write-Debug "ApiQuery:`n$($ApiQuery | ConvertTo-Json -Depth 100)" }
             $Output = (Invoke-NexposeRestMethod @iRestM -TimeOut 300)
 
             If ([string]::IsNullOrEmpty($Output) -eq $true) {
