@@ -71,6 +71,10 @@ Function ConvertFrom-NexposeTable {
                         $item = (New-TimeSpan -Hours $matches.1 -Minutes $matches.2 -Seconds $matches.3)
                         $selectedType = 'timespan'
                     }
+                    ElseIf (($item.StartsWith('[')) -and (($item.EndsWith(']')))) {
+                        $item = @($item.TrimStart('[').TrimEnd(']').Split(',').Trim())
+                        $selectedType = 'string[]'
+                    }
                     ElseIf (    [long]::TryParse($item, [ref]$refLng)) { $selectedType = 'long'     }
                     ElseIf (  [double]::TryParse($item, [ref]$refDbl)) { $selectedType = 'double'   }
                     ElseIf ([datetime]::TryParse($item, [ref]$refDtm)) { $selectedType = 'datetime' }
