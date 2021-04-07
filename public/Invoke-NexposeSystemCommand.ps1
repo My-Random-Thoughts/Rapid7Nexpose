@@ -9,6 +9,9 @@ Function Invoke-NexposeSystemCommand {
     .PARAMETER Command
         The console command to execute
 
+    .PARAMETER ConvertToObject
+        Convert the raw outout into a PowerShell object.  This is useful for table output
+
     .EXAMPLE
         Invoke-NexposeSystemCommand -Command 'help'
 
@@ -28,7 +31,9 @@ Function Invoke-NexposeSystemCommand {
     [CmdletBinding(SupportsShouldProcess)]
     Param (
         [Parameter(Mandatory = $true)]
-        [string]$Command
+        [string]$Command,
+
+        [switch]$ConvertToObject
     )
 
     Begin {
@@ -36,7 +41,13 @@ Function Invoke-NexposeSystemCommand {
 
     Process {
         If ($PSCmdlet.ShouldProcess($Command)) {
-            Write-Output ((Invoke-NexposeQuery -UrlFunction 'administration/commands' -ApiQuery $Command -RestMethod Post).output)
+            $result = ((Invoke-NexposeQuery -UrlFunction 'administration/commands' -ApiQuery $Command -RestMethod Post).output)
+            
+            If ($ConvertToObject.IsPresent) {
+                $result = (ConvertFrom-NexposeTable -InputTable $result)
+            }
+
+            Write-Output $result
         }
     }
 
