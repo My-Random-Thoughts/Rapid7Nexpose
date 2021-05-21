@@ -143,7 +143,13 @@ Function Test-NexposeSearchCriteria {
 
     Process {
         [int]$ReturnCounter = 0
-        $ReturnValue = New-Object -TypeName 'boolean[]' $($SearchCriteria.filters).Count
+#        $ReturnValue = New-Object -TypeName 'boolean[]' $($SearchCriteria.filters).Count
+
+        $FiltersCount = $($SearchCriteria.filters).Count
+        If ((-not $FiltersCount) -and ($SearchCriteria.filters)) {
+            $FiltersCount = 1
+        }
+        $ReturnValue = New-Object -TypeName 'boolean[]' $FiltersCount
 
         # Check there is a correct "match" value
         If (($SearchCriteria.match -ne 'all') -and ($SearchCriteria.match -ne 'any')) {
