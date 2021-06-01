@@ -41,7 +41,7 @@ Function New-NexposeTag {
         [string[]]$Name,
 
         [Parameter(Mandatory = $true)]
-        [ValidateSet('Custom', 'Location', 'Owners')]
+        [ValidateSet('Custom', 'Location', 'Owner')]
         [string]$Type,
 
         [ValidateSet('Default', 'Blue', 'Green', 'Orange', 'Red', 'Purple')]
