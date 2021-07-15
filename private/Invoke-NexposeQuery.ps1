@@ -154,7 +154,7 @@ Function Invoke-NexposeQuery {
             If (($script:page -eq $true) -and ($totalPages -gt 1)) {
                 [int]$totalLength = $($totalPages).ToString().Trim().Length
 
-                2..$totalPages | ForEach-Object -Process {
+                1..$totalPages | ForEach-Object -Process {
                     Write-Verbose "Retreving page $($_.ToString().PadLeft($totalLength)) of $totalPages ..."
                     If ($_ -eq 2) {
                         $iRestM.Uri += '&page=2'
