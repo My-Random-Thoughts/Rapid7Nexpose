@@ -156,13 +156,15 @@ Function Invoke-NexposeQuery {
 
                 1..$totalPages | ForEach-Object -Process {
                     Write-Verbose "Retreving page $($_.ToString().PadLeft($totalLength)) of $totalPages ..."
-                    If ($_ -eq 2) {
-                        $iRestM.Uri += '&page=2'
+                    If (($_ -eq 1) -and -not ([bool][regex]::Match($iRestM.Uri, '(?:&page=)([0-9]{1,})').Groups[1].Value))
+                    {
+                        $iRestM.Uri += '&page=1'
                     }
                     Else {
                         $iRestM.Uri = $iRestM.Uri.Replace("&page=$($_ - 1)", "&page=$_")
                     }
 
+                    Write-Verbose "Executing API method `"$($RestMethod.ToString().ToUpper())`" against `"$($iRestM.Uri)`""
                     $Output = ((Invoke-NexposeRestMethod @iRestM -Verbose:$false -TimeOut 300).resources)
                     If (-not $IncludeLinks.IsPresent) { $Output = (Remove-NexposeLink -InputObject $Output) }
                     Write-Output $Output
