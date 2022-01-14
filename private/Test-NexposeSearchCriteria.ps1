@@ -54,7 +54,7 @@ Function Test-NexposeSearchCriteria {
             'ip-address-type'                = ('0','1')                # 0=ipv4, 1=ipv6
             'pci-compliance'                 = ('0','1')                # 0=fail, 1=pass
             'vulnerability-validated-status' = ('present','not-present')
-            'vasset-power state'             = ('poweredOn','poweredOff','suspended')
+            'vasset-power-state'             = ('poweredOn','poweredOff','suspended')
             'vulnerability-exposures'        = ('malwarekit_exploits','exploit_database_exploits','metasploit_exploits',
                                                 'type:"malware_type", name:"malwarekit"','type:"exploit_source_type", name:"107"','type:"exploit_source_type", name:"108"')
         }
