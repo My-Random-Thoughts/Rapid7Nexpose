@@ -77,7 +77,22 @@ Function Connect-NexposeAPI {
                 Headers = @{Authorization = ('Basic {0}' -f $authInfo)}
             }
 
-            $iWebReq = (Invoke-WebRequest @invokeWebRequest -SessionVariable global:NexposeSession )
+            Try {
+                $iWebReq = (Invoke-WebRequest @invokeWebRequest -SessionVariable global:NexposeSession)
+            }
+            Catch {
+                If ($_.Exception.Message -match '(401)') {
+                    Write-Verbose -Message 'Getting (401) Unauthorized, checking for maintenance mode...'
+
+                    $pageContent = (Invoke-WebRequest -Uri "https://$($HostName):$($Port)" -Method Get -Verbose:$false).Content
+                    If ($pageContent -match 'maintenance') {
+                        Return 'The Security Console is running in maintenance mode'
+                    }
+                    Else {
+                        Return $_.Exception
+                    }
+                }                
+            }
 
             # Add extra header information
             $global:NexposeSession.Headers.Add('HostName',   $HostName               )
