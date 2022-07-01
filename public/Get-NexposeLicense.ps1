@@ -7,7 +7,7 @@ Function Get-NexposeLicense {
         Returns the enabled features and limits of the current license
 
     .EXAMPLE
-        Get-NexposeLicenseKey
+        Get-NexposeLicense
 
     .NOTES
         For additional information please see my GitHub wiki page
