@@ -121,6 +121,9 @@ Function Invoke-NexposeQuery {
             If ((Get-Variable -Name 'NexposeShowLinks' -ValueOnly -ErrorAction SilentlyContinue) -eq $true) { $IncludeLinks = $true }
             If (-not $IncludeLinks.IsPresent) { $Output = (Remove-NexposeLink -InputObject $Output -WhatIf:$false) }
 
+            # Only used for debugging to show full JSON output
+            Write-Debug ($Output | ConvertTo-Json -Depth 100)
+
             # Check for single or multiple pages and resources
             [boolean]$script:resources = $false
             [boolean]$script:page      = $false
