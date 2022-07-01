@@ -7,8 +7,11 @@ Function Get-NexposeScanEngineSharedSecret {
         Returns the current valid shared secret, if one has been previously generated and it has not yet expired
         otherwise the endpoint will respond with a 404 status code. Use this endpoint to detect whether a previously-generated shared secret is still valid.
 
+    .PARAMETER Id
+        The identifier of the scan engine
+
     .EXAMPLE
-        Get-NexposeScanEngineSharedSecret
+        Get-NexposeScanEngineSharedSecret -Id 5
 
     .NOTES
         For additional information please see my GitHub wiki page
@@ -23,13 +26,17 @@ Function Get-NexposeScanEngineSharedSecret {
 
     [CmdletBinding()]
     Param (
+        [Parameter(Mandatory = $true)]
+        [int]$Id
     )
 
-    $result = '' | Select-Object -Property ('secret', 'ttl')
-    $result.secret = (Invoke-NexposeQuery -UrlFunction 'scan_engines/shared_secret' -RestMethod Get)
+    # TODO: Catch known 404 error and handle it
+    # TOTO: Ensure the scan engine id is valid
 
+    $result = '' | Select-Object -Property ('secret', 'ttl')
+    $result.secret = (Invoke-NexposeQuery -UrlFunction "scan_engines/$Id/shared_secret" -RestMethod Get)
     If ($result.secret) {
-        $result.ttl = (Invoke-NexposeQuery -UrlFunction 'scan_engines/shared_secret/time_to_live' -RestMethod Get)
+        $result.ttl = (Invoke-NexposeQuery -UrlFunction 'scan_engines/$Id/shared_secret/time_to_live' -RestMethod Get)
         Write-Output $result
     }
 }
