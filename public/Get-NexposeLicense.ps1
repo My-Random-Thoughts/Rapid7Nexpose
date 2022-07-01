@@ -19,5 +19,8 @@ Function Get-NexposeLicense {
         https://github.com/My-Random-Thoughts/Rapid7Nexpose
 #>
 
+    [CmdletBinding()]
+    Param ()
+
     Write-Output (Invoke-NexposeQuery -UrlFunction 'administration/license' -RestMethod Get)
 }
