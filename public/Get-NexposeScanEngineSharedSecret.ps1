@@ -23,14 +23,20 @@ Function Get-NexposeScanEngineSharedSecret {
 
     [CmdletBinding()]
     Param (
+        [switch]$GenerateIfExpired
     )
 
-    # TODO: Check for 404/415 errors and handle
-
-    $result = '' | Select-Object -Property ('secret', 'ttl')
-    $result.secret = (Invoke-NexposeQuery -UrlFunction "scan_engines/shared_secret" -RestMethod Get)
-    If ($result.secret) {
-        $result.ttl = (Invoke-NexposeQuery -UrlFunction 'scan_engines/shared_secret/time_to_live' -RestMethod Get)
-        Write-Output $result
+    $secret = (Invoke-NexposeQuery -UrlFunction "scan_engines/shared_secret" -RestMethod Get -ErrorAction SilentlyContinue)
+    If (-not $secret) {
+        If ($GenerateIfExpired.IsPresent) {
+            Return (New-NexposeScanEngineSharedSecret)
+        }
+        Else {
+            Write-Warning -Message 'There is no shared secret currently set'
+            Return $null
+        }
     }
+
+    $ttl = (Invoke-NexposeQuery -UrlFunction "scan_engines/shared_secret/time_to_live" -RestMethod Get)
+    Return [pscustomobject]@{SharedSecret = $secret; TTL = $ttl}
 }
