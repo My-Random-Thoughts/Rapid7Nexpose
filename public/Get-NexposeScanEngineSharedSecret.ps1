@@ -7,6 +7,9 @@ Function Get-NexposeScanEngineSharedSecret {
         Returns the current valid shared secret, if one has been previously generated and it has not yet expired
         otherwise the endpoint will respond with a 404 status code. Use this endpoint to detect whether a previously-generated shared secret is still valid.
 
+    .PARAMETER GenerateIfExpired
+        Generate a new secret if one does not currently exist
+
     .EXAMPLE
         Get-NexposeScanEngineSharedSecret
 
@@ -40,3 +43,4 @@ Function Get-NexposeScanEngineSharedSecret {
     $ttl = (Invoke-NexposeQuery -UrlFunction "scan_engines/shared_secret/time_to_live" -RestMethod Get)
     Return [pscustomobject]@{SharedSecret = $secret; TTL = $ttl}
 }
+
