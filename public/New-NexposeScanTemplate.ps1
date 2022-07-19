@@ -36,6 +36,9 @@ Function New-NexposeScanTemplate {
     .PARAMETER WebSpidering
         Hashtable object of properties for the web spider settings used during a scan.  If this option is used, Vulnerabilities must also be used.  See the helper function for more information
 
+    .PARAMETER ImportFile
+        Used to import a previously exported Scan Template file.  Use `Get-NexposeScanTemplate -Id '{template}' | ConvertTo-Json -Depth 10 | Out-File -Path '{filepath}'` to export existing templates
+
     .EXAMPLE
         New-NexposeScanTemplate
 
@@ -49,57 +52,85 @@ Function New-NexposeScanTemplate {
         https://github.com/My-Random-Thoughts/Rapid7Nexpose
 #>
 
-    [CmdletBinding(SupportsShouldProcess)]
+    [CmdletBinding(SupportsShouldProcess, DefaultParameterSetName = 'byParam')]
     Param (
-        [Parameter(Mandatory = $true)]
+        [Parameter(ParameterSetName = 'byParam', Mandatory = $true)]
         [string]$Name,
 
-        [Parameter(Mandatory = $true)]
+        [Parameter(ParameterSetName = 'byParam', Mandatory = $true)]
         [string]$Description,
 
+        [Parameter(ParameterSetName = 'byParam')]
         [switch]$EnableEnhancedLogging,
 
+        [Parameter(ParameterSetName = 'byParam')]
         [switch]$EnableWindowsServices,
 
+        [Parameter(ParameterSetName = 'byParam')]
         [int]$MaxParallelAssets = 10,
 
+        [Parameter(ParameterSetName = 'byParam')]
         [int]$MaxScanProcesses = 10,
 
-        [Parameter(Mandatory = $true)]
+        [Parameter(ParameterSetName = 'byParam', Mandatory = $true)]
         [hashtable]$Discovery,
 
+        [Parameter(ParameterSetName = 'byParam')]
         [hashtable]$Policies,
 
+        [Parameter(ParameterSetName = 'byParam')]
         [hashtable]$Vulnerabilities,
 
-        [hashtable]$WebSpidering
+        [Parameter(ParameterSetName = 'byParam')]
+        [hashtable]$WebSpidering,
+
+        [Parameter(ParameterSetName = 'byImport', Mandatory = $true)]
+        [ValidateScript({Test-Path -Path $_})]
+        [System.IO.FileInfo]$ImportFile
     )
 
     Begin {
         If ($WebSpidering -and (-not $Vulnerabilities)) {
             Throw 'When specifying Web Spidering, Vulnerabilities must also be specified'
         }
+
+        If ($ImportFile) {
+            $jsonImport = (Get-Content -Path $ImportFile)
+            Try {
+                [void]($jsonImport | ConvertFrom-Json)
+            }
+            Catch {
+                Throw 'Imported file is not valid JSON'
+            }            
+        }
     }
 
     Process {
-        $apiQuery = @{
-            name = $Name
-            description = $Description
-            discoveryOnly = 'true'
-
-            enableWindowsServices = ($EnableWindowsServices.IsPresent)
-            enhancedLogging = ($EnableEnhancedLogging.IsPresent)
-            maxParallelAssets = $MaxParallelAssets
-            maxScanProcesses = $MaxScanProcesses
+        If (-not $ImportFile) {
+            $apiQuery = @{
+                name = $Name
+                description = $Description
+                discoveryOnly = 'true'
+    
+                enableWindowsServices = ($EnableWindowsServices.IsPresent)
+                enhancedLogging = ($EnableEnhancedLogging.IsPresent)
+                maxParallelAssets = $MaxParallelAssets
+                maxScanProcesses = $MaxScanProcesses
+            }
+    
+            $apiQuery += $Discovery
+            If ($Policies)        { $apiQuery.discoveryOnly = 'false'; $apiQuery += $Policies        }
+            If ($Vulnerabilities) { $apiQuery.discoveryOnly = 'false'; $apiQuery += $Vulnerabilities }
+            If ($WebSpidering)    { $apiQuery.discoveryOnly = 'false'; $apiQuery += $WebSpidering    }
+    
+            If ($PSCmdlet.ShouldProcess($Name)) {
+                Write-Output (Invoke-NexposeQuery -UrlFunction 'scan_templates' -ApiQuery $apiQuery -RestMethod Post)
+            }
         }
-
-        $apiQuery += $Discovery
-        If ($Policies)        { $apiQuery.discoveryOnly = 'false'; $apiQuery += $Policies        }
-        If ($Vulnerabilities) { $apiQuery.discoveryOnly = 'false'; $apiQuery += $Vulnerabilities }
-        If ($WebSpidering)    { $apiQuery.discoveryOnly = 'false'; $apiQuery += $WebSpidering    }
-
-        If ($PSCmdlet.ShouldProcess($Name)) {
-            Write-Output (Invoke-NexposeQuery -UrlFunction 'scan_templates' -ApiQuery $apiQuery -RestMethod Post)
+        Else {
+            If ($PSCmdlet.ShouldProcess("Imported File: '$($ImportFile.Name)'")) {
+                Write-Output (Invoke-NexposeQuery -UrlFunction 'scan_templates' -ApiQuery ($jsonImport -as [string]) -RestMethod Post)
+            }
         }
     }
 
