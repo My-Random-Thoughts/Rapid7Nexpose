@@ -29,7 +29,7 @@ Function Get-NexposeScanTemplate {
     [CmdletBinding(DefaultParameterSetName = 'byId')]
     Param (
         [Parameter(ParameterSetName = 'byId')]
-        [string]$Id = '0',
+        [string]$Id,
 
         [Parameter(ParameterSetName = 'byName')]
         [string]$Name
@@ -37,7 +37,7 @@ Function Get-NexposeScanTemplate {
 
     Switch ($PSCmdlet.ParameterSetName) {
         'byId' {
-            If ($Id -gt 0) {
+            If ($Id) {
                 Write-Output (Invoke-NexposeQuery -UrlFunction "scan_templates/$Id" -RestMethod Get)
             }
             Else {
