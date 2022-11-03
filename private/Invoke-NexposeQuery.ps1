@@ -154,7 +154,7 @@ Function Invoke-NexposeQuery {
 
             # Output for any additional pages
             [int]$totalPages = ($Output.page.totalPages - 1)
-            If (($script:page -eq $true) -and ($totalPages -gt 1)) {
+            If (($script:page -eq $true) -and ($totalPages -ge 1)) {
                 [int]$totalLength = $($totalPages).ToString().Trim().Length
 
                 1..$totalPages | ForEach-Object -Process {
