@@ -63,11 +63,17 @@ Function Convert-FrequencyString {
                     $dayOfWeek = $groupFrequency.Value.ToLower()
                 }
 
-                '5' {}   # every 1ST..5TH
+                '5' {    # every 1ST..5TH
+                    $values = @('', 'first', 'second', 'third', 'fourth', 'fifth')
+                    $weekOfMonth = $values.IndexOf($matchFrequency.Groups[5].Value)
+                }
+
                 '6' {    # MONDAY..SUNDAY of the month
                     $every       = 'day-of-month'
                     $dayOfWeek   =  $groupFrequency.Value.ToLower()
-                    $weekOfMonth = ($matchFrequency.Groups[5].Value).Substring(0, 1)
+                    If ($weekOfMonth -lt 1) {
+                        $weekOfMonth = ($matchFrequency.Groups[5].Value).Substring(0, 1)
+                    }
                     $interval    = 1
                 }
 
