@@ -37,11 +37,11 @@ Function Test-FrequencyString {
     [System.Text.StringBuilder]$regexString = ''
 
     # Capture groups used in 'Convert-IntervalString'
-    [void]($regexString.Append('^(?:once|every (?:(?:(?:1 )?(hour|day|week)|([2-9]|[1-9][0-9][0-9]?) (hours|days|weeks))|'))    # Capture groups 1, 2 and 3
-    [void]($regexString.Append('(monday|tuesday|wednesday|thursday|friday|saturday|sunday)|'))                                  # Capture group  4
-    [void]($regexString.Append('(?:(1st|2nd|3rd|4th|5th) (monday|tuesday|wednesday|thursday|friday|saturday|sunday)|'))         # Capture groups 5 and 6
-    [void]($regexString.Append('((?:[23]?(?<!1)1st|2?(?<!1)2nd|2?(?<!1)3rd)|(?:(?:[4-9]|[1-2][04-9])|11|12|13|30)th))'))        # Capture group  7
-    [void]($regexString.Append('(?: of the month(?: repeat(?:ed)? every ([2-9]|[1-9][0-9][0-9]?) months)?)))$'))                # Capture group  8
+    [void]($regexString.Append('^(?:once|every (?:(?:(?:1 )?(hour|day|week)|([2-9]|[1-9][0-9][0-9]?) (hours|days|weeks))|'))                               # Capture groups 1, 2 and 3
+    [void]($regexString.Append('(monday|tuesday|wednesday|thursday|friday|saturday|sunday)|'))                                                             # Capture group  4
+    [void]($regexString.Append('(?:(1st|first|2nd|second|3rd|third|4th|fourth|5th|fifth) (monday|tuesday|wednesday|thursday|friday|saturday|sunday)|'))    # Capture groups 5 and 6
+    [void]($regexString.Append('((?:[23]?(?<!1)1st|2?(?<!1)2nd|2?(?<!1)3rd)|(?:(?:[4-9]|[1-2][04-9])|11|12|13|30)th))'))                                   # Capture group  7
+    [void]($regexString.Append('(?: of the month(?: repeat(?:ed)? every ([2-9]|[1-9][0-9][0-9]?) months)?)))$'))                                           # Capture group  8
     Write-Verbose -Message $regexString
 
     # Validate input string
