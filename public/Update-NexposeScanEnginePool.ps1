@@ -15,11 +15,17 @@ Function Update-NexposeScanEnginePool {
     .PARAMETER ScanEngine
         The identifiers or names of the scan engines in the engine pool.  This will replace all existing scan engines with the provided list
 
+    .PARAMETER Site
+        The identifiers or names of the sites in the engine pool.  This will replace all existing scan engines with the provided list
+
     .EXAMPLE
         Update-NexposeScanEnginePool -Id 3 -NewName 'UK West'
 
     .EXAMPLE
         Update-NexposeScanEnginePool -Id 6 -ScanEngine @('uk-west-engine-01','uk-west-engine-02')
+
+    .EXAMPLE
+        Update-NexposeScanEnginePool -Id 4 -Site 'uk-west-01'
 
     .NOTES
         For additional information please see my GitHub wiki page
@@ -39,7 +45,9 @@ Function Update-NexposeScanEnginePool {
 
         [string]$NewName,
 
-        [string[]]$ScanEngine
+        [string[]]$ScanEngine,
+
+        [string[]]$Site
     )
 
     Begin {
@@ -51,17 +59,35 @@ Function Update-NexposeScanEnginePool {
         $pool = (Get-NexposeScanEnginePool -Id $id)
         If ([string]::IsNullOrEmpty($NewName)    -eq $true) { $NewName    = $pool.name    }
         If ([string]::IsNullOrEmpty($ScanEngine) -eq $true) { $ScanEngine = $pool.engines }
+        If ([string]::IsNullOrEmpty($Site)       -eq $true) { $Site       = $pool.sites   }
 
+        # Create ENGINE list
         If (-not [string]::IsNullOrEmpty($ScanEngine)) {
             [int[]]$ScanEngineIds = @()
-            ForEach ($seId In $ScanEngine) {
+            ForEach ($seId In $ScanEngineIds) {
                 If ((($seId -as [int]) -eq $seId) -and ($seId -gt 0)) {
                     $ScanEngineIds += $seId
                 }
                 Else {
-                    $seId = ((Get-NexposeScanEngine -Name $Engine).id)
+                    $seId = ((Get-NexposeScanEngine -Name $seId).id)
                     If (($seId -is [int]) -and ($seId -gt 0)) {
                         $ScanEngineIds += $seId
+                    }
+                }
+            }
+        }
+
+        # Create SITE list
+        If (-not [string]::IsNullOrEmpty($Site)) {
+            [int[]]$SiteIds = @()
+            ForEach ($sId In $SiteIds) {
+                If ((($sId -as [int]) -eq $sId) -and ($sId -gt 0)) {
+                    $ScanEngineIds += $sId
+                }
+                Else {
+                    $sId = ((Get-NexposeSite -Name $sId).id)
+                    If (($sId -is [int]) -and ($sId -gt 0)) {
+                        $SiteIds += $sId
                     }
                 }
             }
@@ -70,8 +96,10 @@ Function Update-NexposeScanEnginePool {
 
     Process {
         $apiQuery = @{
+            id      =   $Id
             name    =   $NewName
             engines = @($ScanEngineIds)
+            sites   = @($SiteIds)
         }
 
         If ($PSCmdlet.ShouldProcess($Id)) {
