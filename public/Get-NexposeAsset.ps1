@@ -30,6 +30,9 @@ Function Get-NexposeAsset {
     .PARAMETER TagType
         The type of the tag being specified.  One of 'Criticality', 'Custom', 'Location', 'Owner'
 
+    .PARAMETER Count
+        Return just the count of returned assets
+
     .EXAMPLE
         Get-NexposeAsset -Id 325
 
@@ -80,24 +83,30 @@ Function Get-NexposeAsset {
 
         [Parameter(Mandatory = $true, ParameterSetName = 'byTag')]
         [ValidateSet('Criticality', 'Custom', 'Location', 'Owner')]
-        [string]$TagType
+        [string]$TagType,
+
+        [switch]$Count
     )
 
     Switch ($PSCmdlet.ParameterSetName) {
         'byId' {
             If ($Id -gt 0) {
-                Write-Output (Invoke-NexposeQuery -UrlFunction "assets/$Id" -RestMethod Get)
+                Write-Output (Invoke-NexposeQuery -UrlFunction "assets/$Id" -RestMethod Get -Count:$Count.IsPresent)
             }
             Else {
-                Write-Output @(Invoke-NexposeQuery -UrlFunction 'assets' -RestMethod Get)    # Return All
+                Write-Output @(Invoke-NexposeQuery -UrlFunction 'assets' -RestMethod Get -Count:$Count.IsPresent)    # Return All
             }
         }
 
         'byGroup' {
             $Group = (ConvertTo-NexposeId -Name $Group -ObjectType 'AssetGroup')
-            [object]$assets = @(Invoke-NexposeQuery -UrlFunction "asset_groups/$Group/assets" -RestMethod Get)
+            If (-not $Group) { Throw 'Invalid group name or id' }
+            [object]$assets = @(Invoke-NexposeQuery -UrlFunction "asset_groups/$Group/assets" -RestMethod Get -Count:$Count.IsPresent)
 
-            If ([string]::IsNullOrEmpty($assets) -eq $false) {
+            If ($Count.IsPresent) {
+                Write-Output $assets[0]
+            }
+            ElseIf ([string]::IsNullOrEmpty($assets) -eq $false) {
                 ForEach ($id In $assets) {
                     Write-Output (Get-NexposeAsset -Id $id)
                 }
@@ -155,8 +164,14 @@ Function Get-NexposeAsset {
             If ($value -is [array]) { $apiQuery.filters[0].Remove('value')  }
             Else                    { $apiQuery.filters[0].Remove('values') }
 
-            [object]$assetData = @(Invoke-NexposeQuery -UrlFunction 'assets/search' -ApiQuery $apiQuery -RestMethod Post)
-            If ([string]::IsNullOrEmpty($assetData.id) -eq $false) {
+            [object]$assetData = @(Invoke-NexposeQuery -UrlFunction 'assets/search' -ApiQuery $apiQuery -RestMethod Post -Count:$Count.IsPresent)
+            If ($Count.IsPresent) {
+                Write-Output $assetData[0]
+            }
+            ElseIf ([string]::IsNullOrEmpty($assetData.id) -eq $false) {
+                Write-Output $assetData
+            }
+            Else {
                 Write-Output $assetData
             }
         }
