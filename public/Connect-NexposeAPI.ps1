@@ -91,7 +91,10 @@ Function Connect-NexposeAPI {
                     Else {
                         Return $_.Exception
                     }
-                }                
+                }
+                Else {
+                    Return $_.Exception
+                }
             }
 
             # Add extra header information
