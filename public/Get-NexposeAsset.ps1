@@ -31,7 +31,10 @@ Function Get-NexposeAsset {
         The type of the tag being specified.  One of 'Criticality', 'Custom', 'Location', 'Owner'
 
     .PARAMETER Count
-        Return just the count of returned assets
+        Return just the count of assets
+
+    .PARAMETER IdsOnly
+        Return the list of asset IDs only when using the 'Group' parameter, this reduces API calls.
 
     .EXAMPLE
         Get-NexposeAsset -Id 325
@@ -41,6 +44,12 @@ Function Get-NexposeAsset {
 
     .EXAMPLE
         Get-NexposeAsset -Group 'LIVE'
+
+    .EXAMPLE
+        Get-NexposeAsset -Tag 'Linux' -Count
+
+    .EXAMPLE
+        Get-NexposeAsset -Group 'LIVE' -IdsOnly
 
     .NOTES
         For additional information please see my GitHub wiki page
@@ -85,7 +94,10 @@ Function Get-NexposeAsset {
         [ValidateSet('Criticality', 'Custom', 'Location', 'Owner')]
         [string]$TagType,
 
-        [switch]$Count
+        [switch]$Count,
+
+        [Parameter(ParameterSetName = 'byGroup')]
+        [switch]$IdsOnly
     )
 
     Switch ($PSCmdlet.ParameterSetName) {
@@ -105,6 +117,9 @@ Function Get-NexposeAsset {
 
             If ($Count.IsPresent) {
                 Write-Output $assets[0]
+            }
+            ElseIf ($IdsOnly.IsPresent) {
+                Write-Output $assets
             }
             ElseIf ([string]::IsNullOrEmpty($assets) -eq $false) {
                 ForEach ($id In $assets) {
