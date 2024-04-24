@@ -51,7 +51,7 @@ Function Update-NexposeScanEnginePool {
     )
 
     Begin {
-        If ([string]::IsNullOrEmpty($NewName) -and [string]::IsNullOrEmpty($ScanEngine)) {
+        If ([string]::IsNullOrEmpty($NewName) -and [string]::IsNullOrEmpty($ScanEngine) -and [string]::IsNullOrEmpty($Site)) {
             Throw 'At least one parameter must be supplied'
         }
 
@@ -64,7 +64,7 @@ Function Update-NexposeScanEnginePool {
         # Create ENGINE list
         If (-not [string]::IsNullOrEmpty($ScanEngine)) {
             [int[]]$ScanEngineIds = @()
-            ForEach ($seId In $ScanEngineIds) {
+            ForEach ($seId In $ScanEngine) {
                 If ((($seId -as [int]) -eq $seId) -and ($seId -gt 0)) {
                     $ScanEngineIds += $seId
                 }
@@ -80,9 +80,9 @@ Function Update-NexposeScanEnginePool {
         # Create SITE list
         If (-not [string]::IsNullOrEmpty($Site)) {
             [int[]]$SiteIds = @()
-            ForEach ($sId In $SiteIds) {
+            ForEach ($sId In $Site) {
                 If ((($sId -as [int]) -eq $sId) -and ($sId -gt 0)) {
-                    $ScanEngineIds += $sId
+                    $SiteIds += $sId
                 }
                 Else {
                     $sId = ((Get-NexposeSite -Name $sId).id)
