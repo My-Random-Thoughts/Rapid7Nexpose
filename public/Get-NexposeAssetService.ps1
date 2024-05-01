@@ -47,6 +47,7 @@ Function Get-NexposeAssetService {
         [ValidateSet('ip','icmp','igmp','ggp','tcp','pup','udp','idp','esp','nd','raw')]
         [string]$Protocol,
 
+        [ValidateRange(1, 65535)]
         [int]$Port
     )
 
