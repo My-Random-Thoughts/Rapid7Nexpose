@@ -44,6 +44,7 @@ Function Update-NexposeScanEngine {
 
         [string]$Address,
 
+        [ValidateRange(1, 65535)]
         [int]$Port,
 
         [int[]]$Site
@@ -55,7 +56,7 @@ Function Update-NexposeScanEngine {
 
         If ([string]::IsNullOrEmpty($Name)    -eq $true) { $Name    = $engine.name    }
         If ([string]::IsNullOrEmpty($Address) -eq $true) { $Address = $engine.address }
-        If ([string]::IsNullOrEmpty($Port)    -eq $true) { $Port    = $engine.port    }
+        If (-not $Port)                                  { $Port    = $engine.port    }
         If ([string]::IsNullOrEmpty($Site)    -eq $true) { $Site    = $engine.site    }
     }
 
