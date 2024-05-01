@@ -175,17 +175,7 @@ Function Invoke-NexposeQuery {
             }
         }
         Catch {
-            $errMsg1 = $_.Exception.Message
-            Try {
-                $reader = New-Object System.IO.StreamReader($_.Exception.Response.GetResponseStream())
-                $reader.BaseStream.Position = 0
-                $reader.DiscardBufferedData()
-                $errMsg2 = $reader.ReadToEnd()
-            }
-            Catch {
-                $errMsg3 = $_.Exception.Message
-            }
-            Throw "`n$errMsg1`n$errMsg2`n$errMsg3"
+            Write-Output $_
         }
     }
 
