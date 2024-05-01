@@ -41,6 +41,7 @@ Function Connect-NexposeAPI {
         [Parameter(Mandatory = $true)]
         [string]$HostName,
 
+        [ValidateRange(1, 65535)]
         [int]$Port = 3780,
 
         [Parameter(Mandatory = $true)]
