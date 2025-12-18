@@ -12,6 +12,9 @@ Function Get-NexposeUserLastLogon {
     .PARAMETER Name
         The login name of the user
 
+    .PARAMETER ForceData
+        Forces the return of a date value if instead of 'No data returned'
+
     .EXAMPLE
         Get-NexposeUserLastLogon -Id 42
 
@@ -35,7 +38,9 @@ Function Get-NexposeUserLastLogon {
         [int]$Id,
 
         [Parameter(Mandatory = $true, ParameterSetName = 'byName')]
-        [string]$Name
+        [string]$Name,
+
+        [switch]$ForceDate
     )
 
     Begin {
@@ -77,7 +82,7 @@ Function Get-NexposeUserLastLogon {
             $xmlId    = $user.ChildNodes[1].InnerText
             $xmlLogin = $user.ChildNodes[9].InnerText
 
-            If (-not $xmlLogin) {
+            If ((-not $xmlLogin) -and (-not $ForceDate)) {
                 Return 'No data returned'
             }
             If ($xmlId -eq $Id) {
@@ -91,3 +96,4 @@ Function Get-NexposeUserLastLogon {
     End {
     }
 }
+
