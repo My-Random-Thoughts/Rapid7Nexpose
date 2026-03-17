@@ -79,13 +79,13 @@ Function Connect-NexposeAPI {
             }
 
             Try {
-                $iWebReq = (Invoke-WebRequest @invokeWebRequest -SessionVariable global:NexposeSession)
+                $iWebReq = (Invoke-WebRequest @invokeWebRequest -SessionVariable global:NexposeSession -UseBasicParsing)
             }
             Catch {
                 If ($_.Exception.Message -match '(401)') {
                     Write-Verbose -Message 'Getting (401) Unauthorized, checking for maintenance mode...'
 
-                    $pageContent = (Invoke-WebRequest -Uri "https://$($HostName):$($Port)" -Method Get -Verbose:$false).Content
+                    $pageContent = (Invoke-WebRequest -Uri "https://$($HostName):$($Port)" -Method Get -UseBasicParsing -Verbose:$false).Content
                     If ($pageContent -match 'maintenance') {
                         Return 'The Security Console is running in maintenance mode'
                     }
